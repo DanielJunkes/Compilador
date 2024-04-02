@@ -46,28 +46,22 @@ def analisar():
                     #verificacao para atribuidores com mais de um caracter
                     if lexema == '>':
                         if codigo[j+1] == '>' or codigo[j+1] == '=':
-                            lexema += codigo[j+1]
-                            j += 1
+                            continue
                     if lexema == '<':
                         if codigo[j+1] == '<' or codigo[j+1] == '=':
-                            lexema += codigo[j+1]
-                            j += 1
+                            continue
                     if lexema == '=':
                         if codigo[j+1] == '=':
-                            lexema += codigo[j+1]
-                            j += 1
+                            continue
                     if lexema == '+':
                         if codigo[j+1] == '+':
-                            lexema += codigo[j+1]
-                            j += 1
+                            continue
                     if lexema == '-':
                         if codigo[j+1] == '-':
-                            lexema += codigo[j+1]
-                            j += 1
+                            continue
                     if lexema == '!':
                         if codigo[j+1] == '=':
-                            lexema += codigo[j+1]
-                            j += 1
+                            continue
                     if lexema == '/':
                         if codigo[j+1] == '/':
                             break
