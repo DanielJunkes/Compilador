@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import sys
 
 #lista para salvar os tokens e codigos
 tokens = []
@@ -12,8 +13,9 @@ palavras_reservadas = {'while': 1, 'void': 2, 'string': 3, 'return': 4, 'main': 
 
 #dicionario com atribuidores e parentizacao
 #nome provisório
-atribuidores_parentizacao = {'>>': 26, '>=': 27, '>': 28, '==': 29, '=': 30, '<=': 31, '<<': 32, '<': 33, '++': 34, '+': 35, '{': 36,
-                             '}': 37, ';': 38, ':': 39, '/': 40, ',': 41, '*': 42, '(': 43, ')': 44, '$': 45, '!=': 46, '--': 47, '-': 48}
+atribuidores_parentizacao = {'>': 28, '=': 30, '<': 33, '+': 35, '{': 36, '}': 37, ';': 38, ':': 39, 
+                             '/': 40, ',': 41, '*': 42, '(': 43, ')': 44, '$': 45, '-': 48}
+atribuidores_duplos = {'>>': 26, '>=': 27, '==': 29, '<=': 31, '<<': 32,'++': 34, '!=': 46, '--': 47}
 
 def analisar():
     #pega o numero de linhas
@@ -22,49 +24,26 @@ def analisar():
         lexema = ''
         #pega o texto que esta na linha
         codigo = textBox.get(f'{i}.0', f'{i}.end')
-        print(codigo)
         #percorre o texto da linha
         for j in range(len(codigo)):
-            print(j)
-            if codigo[j] != ' ':
-                    lexema = lexema + codigo[j]
+            if codigo[j] in atribuidores_parentizacao:
+                lexema = lexema + codigo[j]
+                if j+1 < len(codigo):
+                    if lexema + codigo[j+1] in atribuidores_duplos:
+                        continue
+            elif codigo[j] != ' ':
+                lexema = lexema + codigo[j]
             else:
                 lexema = ''
-            print(lexema)
-            #verifica se o lexema esta dentro das palavras reservadas
-            if lexema in palavras_reservadas:
-                for key, value in palavras_reservadas.items():
+            if lexema in atribuidores_duplos:
+                for key, value in atribuidores_duplos.items():
                     if key == lexema:
                         tokens.append(value)
                         codigos.append(key)
                         linha.append(i)
                         lexema = ''
                         break
-            #verifica se o lexama esta dentro dos atribuidores e parentizacao
             elif lexema in atribuidores_parentizacao:
-                if j+1 < len(codigo):
-                    #verificacao para atribuidores com mais de um caracter
-                    if lexema == '>':
-                        if codigo[j+1] == '>' or codigo[j+1] == '=':
-                            continue
-                    if lexema == '<':
-                        if codigo[j+1] == '<' or codigo[j+1] == '=':
-                            continue
-                    if lexema == '=':
-                        if codigo[j+1] == '=':
-                            continue
-                    if lexema == '+':
-                        if codigo[j+1] == '+':
-                            continue
-                    if lexema == '-':
-                        if codigo[j+1] == '-':
-                            continue
-                    if lexema == '!':
-                        if codigo[j+1] == '=':
-                            continue
-                    if lexema == '/':
-                        if codigo[j+1] == '/':
-                            break
                 for key, value in atribuidores_parentizacao.items():
                     if key == lexema:
                         tokens.append(value)
@@ -72,23 +51,53 @@ def analisar():
                         linha.append(i)
                         lexema = ''
                         break
-                    
+            #verifica se o lexema esta dentro das palavras reservadas
+            elif lexema in palavras_reservadas:
+                for key, value in palavras_reservadas.items():
+                    if key == lexema:
+                        tokens.append(value)
+                        codigos.append(key)
+                        linha.append(i)
+                        if j+1 < len(codigo):
+                            if codigo[j+1] in atribuidores_parentizacao or codigo[j+1] == ' ':
+                                lexema = ''
+                            else:
+                                print(f'Erro lexico - Linha {i}, posicao {len(lexema) - j}')
+                                sys.exit()
+                        break
+    #coloca o resultado da analise lexica no espaço destinado
+    textBoxResult.configure(state="normal")
     for i in range(len(tokens)):
-        print(f'Token: {tokens[i]} - Lexema: {codigos[i]} - Linha: {linha[i]}')
+        textBoxResult.insert('1.0', f'Token: {tokens[i]} - Lexema: {codigos[i]} - Linha: {linha[i]}\n')
+    textBoxResult.configure(state="disabled")
+
+
+
+
+
+
+
 
 #interface grafica
 app = ctk.CTk()
 
 app.title("Analisador Léxico")
-app.geometry("1000x600")
-app.grid_columnconfigure((0,1,2), weight=1)
+app.geometry("1280x650")
+app.grid_columnconfigure((0,1,2,3), weight=1)
 app.grid_rowconfigure((0,1,2,3), weight=1)
+app.resizable(False, False)
 
 #area para escrever
+label = ctk.CTkLabel(app, text="Código:")
+label.grid(row=0, column=0, padx=10)
 textBox = ctk.CTkTextbox(app)
-textBox.grid(row=0, column=0, rowspan=3, columnspan=3, sticky="nsew", padx=10, pady=10)
+textBox.grid(row=0, column=0, rowspan=3, columnspan=4, sticky="nsew", padx=(10, 270), pady=10)
+
+#area para mostrar analise lexica
+textBoxResult = ctk.CTkTextbox(app, state="disabled")
+textBoxResult.grid(row=0, column=2, rowspan=3, columnspan=2, sticky="nsew", padx=(920, 10), pady=10)
 
 btnAnalisar = ctk.CTkButton(app, text="Analisar", command=analisar)
-btnAnalisar.grid(row=3, column=1, sticky="nsew", padx=10, pady=10)
+btnAnalisar.grid(row=3, column=1, columnspan=2, sticky="nsew", padx=10, pady=10)
 
 app.mainloop()
