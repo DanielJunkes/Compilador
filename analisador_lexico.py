@@ -17,6 +17,9 @@ atribuidores_duplos = {'>>': 26, '>=': 27, '==': 29, '<=': 31, '<<': 32,'++': 34
 #dicionario com os tokens dos valores dos dados
 valores_dos_dados = {'numerointeiro': 5, 'numerofloat': 6, 'nomevariavel': 7, 'nomedochar': 8, 'nomedastring': 10}
 
+#dicionatio com simbolos que iniciam textos
+textos = {'"': 10, "'": 8, '|': 7}
+
 def analisar():
     #lista para salvar os tokens e codigos
     tokens = []
@@ -24,7 +27,7 @@ def analisar():
     linha = []
     
     comentario_bloco = False
-    is_string = False
+    is_text = False
     
     textBoxResult.configure(state="normal")
     textBoxResult.delete('1.0', 'end')
@@ -51,23 +54,25 @@ def analisar():
                     if codigo[j+1] == '*':
                         comentario_bloco = True
                         break
-            elif is_string:
-                if codigo[j] == '"':
-                    is_string = False
-                    for key, value in valores_dos_dados.items():
-                        if key == 'nomedastring':
+            elif is_text:
+                if codigo[j] in textos:
+                    is_text = False
+                    for key, value in textos.items():
+                        if key == codigo[j]:
                             tokens.append(value)
                             codigos.append(lexema)
                             linha.append(i)
                             lexema = ''
-                lexema = lexema + codigo[j]
+                            break
+                else:
+                    lexema = lexema + codigo[j]
             elif codigo[j] in atribuidores_parentizacao:
                 lexema = lexema + codigo[j]
                 if j+1 < len(codigo):
                     if lexema + codigo[j+1] in atribuidores_duplos:
                         continue
-            elif codigo[j] == '"':
-                is_string = True
+            elif codigo[j] in textos:
+                is_text = True
             elif codigo[j] != ' ':
                 lexema = lexema + codigo[j]
             else:
