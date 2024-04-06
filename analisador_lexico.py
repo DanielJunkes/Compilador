@@ -5,7 +5,7 @@ import sys
 
 #dicionario com as palavras reservadas
 palavras_reservadas = {'while': 1, 'void': 2, 'string': 3, 'return': 4, 'main': 11, 'literal': 12, 'integer': 13, 'inicio': 14, 'if': 15, 
-                       'for': 17, 'float': 18, 'fim': 19, 'else': 20, 'do': 21, 'count': 22, 'cin': 23, 'char': 24, 
+                       'for': 17, 'float': 18, 'fim': 19, 'else': 20, 'do': 21, 'cout': 22, 'cin': 23, 'char': 24, 
                        'callfuncao': 25}
 
 #dicionario com atribuidores e parentizacao
@@ -71,6 +71,45 @@ def analisar():
                 if j+1 < len(codigo):
                     if lexema + codigo[j+1] in atribuidores_duplos:
                         continue
+            elif codigo[j].isnumeric() and lexema == '':
+                lexema = lexema + codigo[j]
+                if j+1 < len(codigo):
+                    if codigo[j+1].isnumeric() or codigo[j+1] == '.':
+                        continue
+                    if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
+                        if '.' in lexema:
+                            for key, value in valores_dos_dados.items():
+                                if key == 'numerofloat':
+                                    tokens.append(value)
+                                    codigos.append(lexema)
+                                    linha.append(i)
+                                    lexema = ''
+                                    break
+                        else:
+                            for key, value in valores_dos_dados.items():
+                                if key == 'numerointeiro':
+                                    tokens.append(value)
+                                    codigos.append(lexema)
+                                    linha.append(i)
+                                    lexema = ''
+                                    break
+                else:
+                    if '.' in lexema:
+                        for key, value in valores_dos_dados.items():
+                            if key == 'numerofloat':
+                                tokens.append(value)
+                                codigos.append(lexema)
+                                linha.append(i)
+                                lexema = ''
+                                break
+                    else:
+                        for key, value in valores_dos_dados.items():
+                            if key == 'numerointeiro':
+                                tokens.append(value)
+                                codigos.append(lexema)
+                                linha.append(i)
+                                lexema = ''
+                                break
             elif codigo[j] in textos:
                 is_text = True
             elif codigo[j] != ' ':
@@ -118,6 +157,14 @@ def analisar():
             #verifica se é declaração de variavel
             elif j+1 < len(codigo):
                 if codigo[j+1] == ',' or codigo[j+1] == ':':
+                    for key, value in valores_dos_dados.items():
+                        if key == 'nomevariavel':
+                            tokens.append(value)
+                            codigos.append(lexema)
+                            linha.append(i)
+                            lexema = ''
+                            break
+            if lexema in codigos:
                     for key, value in valores_dos_dados.items():
                         if key == 'nomevariavel':
                             tokens.append(value)
