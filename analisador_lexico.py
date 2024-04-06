@@ -1,5 +1,5 @@
 import customtkinter as ctk
-
+from tkinter import filedialog
 #dicionario com as palavras reservadas
 palavras_reservadas = {'while': 1, 'void': 2, 'string': 3, 'return': 4, 'main': 11, 'literal': 12, 'integer': 13, 'inicio': 14, 'if': 15, 
                        'for': 17, 'float': 18, 'fim': 19, 'else': 20, 'do': 21, 'cout': 22, 'cin': 23, 'char': 24, 
@@ -187,6 +187,18 @@ def analisar():
     for i in range(len(tokens)):
         textBoxResult.insert('end', f'Token: {tokens[i]} - Lexema {codigos[i]} - Linha: {linha[i]}\n')
     textBoxResult.configure(state="disabled")
+    
+def importar_arquivo():
+    #pega o caminho do arquivo
+    arquivo = filedialog.askopenfile(mode='r', initialdir='./Desktop', title='Selecione um arquivo', filetypes=([('Arquivos de Texto', '*.txt')]))
+    
+    #abre o arquivo
+    conteudo = arquivo.read()
+    
+    #coloca o texto no textBox
+    textBox.delete('1.0', 'end')
+    textBox.insert('end', conteudo)
+    #
 
 #interface grafica
 app = ctk.CTk()
@@ -208,6 +220,9 @@ textBoxResult = ctk.CTkTextbox(app, state="disabled")
 textBoxResult.grid(row=0, column=2, rowspan=3, columnspan=2, sticky="nsew", padx=(890, 10), pady=10)
 
 btnAnalisar = ctk.CTkButton(app, text="Analisar", command=analisar)
-btnAnalisar.grid(row=3, column=1, columnspan=2, sticky="nsew", padx=10, pady=10)
+btnAnalisar.grid(row=3, column=0, columnspan=3, sticky="nsew", padx=10, pady=10)
+
+btnImportar = ctk.CTkButton(app, text="Importar Arquivo", command=importar_arquivo)
+btnImportar.grid(row=3, column=3, columnspan=2, sticky="nsew", padx=10, pady=10)
 
 app.mainloop()
