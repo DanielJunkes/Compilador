@@ -33,9 +33,10 @@ def analisar():
     textBoxResult.configure(state="disabled")
     
     #pega o numero de linhas
-    linhas = textBox.index('end-1c').split('.')[0]   
+    linhas = textBox.index('end-1c').split('.')[0] 
+    lexema = ''
+      
     for i in range(1, int(linhas)+1):
-        lexema = ''
         #pega o texto que esta na linha
         codigo = textBox.get(f'{i}.0', f'{i}.end')
         
@@ -66,6 +67,7 @@ def analisar():
                             break
                 else:
                     lexema = lexema + codigo[j]
+                    continue
             #verifica se é um dos possiveis atribuidores ou parenteses 
             elif codigo[j] in atribuidores_parentizacao:
                 lexema = lexema + codigo[j]
@@ -83,13 +85,17 @@ def analisar():
                     if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
                         #verifica se é float
                         if '.' in lexema:
-                            for key, value in valores_dos_dados.items():
-                                if key == 'numerofloat':
-                                    tokens.append(value)
-                                    codigos.append(lexema)
-                                    linha.append(i)
-                                    lexema = ''
-                                    break
+                            casa_decimal = lexema.split('.')
+                            if len(casa_decimal[1]) > 2:
+                                print(f'Erro na linha {i}: valor do tipo float excedeu o limite de 2 casas decimais')
+                            else:
+                                for key, value in valores_dos_dados.items():
+                                    if key == 'numerofloat':
+                                        tokens.append(value)
+                                        codigos.append(lexema)
+                                        linha.append(i)
+                                        lexema = ''
+                                        break
                         else:
                             for key, value in valores_dos_dados.items():
                                 if key == 'numerointeiro':
@@ -101,13 +107,16 @@ def analisar():
                 #salva caso o numero for o ultimo caracter da linha
                 else:
                     if '.' in lexema:
-                        for key, value in valores_dos_dados.items():
-                            if key == 'numerofloat':
-                                tokens.append(value)
-                                codigos.append(lexema)
-                                linha.append(i)
-                                lexema = ''
-                                break
+                        if lexema.split('.')[1] > 99:
+                                print(f'Erro na linha {i}: valor do tipo float excedeu o limite de 2 casas decimais')
+                        else:
+                            for key, value in valores_dos_dados.items():
+                                if key == 'numerofloat':
+                                    tokens.append(value)
+                                    codigos.append(lexema)
+                                    linha.append(i)
+                                    lexema = ''
+                                    break
                     else:
                         for key, value in valores_dos_dados.items():
                             if key == 'numerointeiro':
@@ -198,7 +207,6 @@ def importar_arquivo():
     #coloca o texto no textBox
     textBox.delete('1.0', 'end')
     textBox.insert('end', conteudo)
-    #
 
 #interface grafica
 app = ctk.CTk()
