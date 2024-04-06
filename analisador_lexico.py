@@ -35,6 +35,7 @@ def analisar():
         lexema = ''
         #pega o texto que esta na linha
         codigo = textBox.get(f'{i}.0', f'{i}.end')
+        print(codigo)
         #percorre o texto da linha
         for j in range(len(codigo)):
             if '*\\' in codigo:
@@ -58,15 +59,41 @@ def analisar():
                 lexema = lexema + codigo[j]
             else:
                 lexema = ''
-            if lexema in atribuidores_duplos:
-                for key, value in atribuidores_duplos.items():
+            print(lexema)
+            #verifica se o lexema esta dentro das palavras reservadas
+            if lexema in palavras_reservadas:
+                for key, value in palavras_reservadas.items():
                     if key == lexema:
                         tokens.append(value)
                         codigos.append(key)
                         linha.append(i)
                         lexema = ''
                         break
+            #verifica se o lexama esta dentro dos atribuidores e parentizacao
             elif lexema in atribuidores_parentizacao:
+                if j+1 < len(codigo):
+                    #verificacao para atribuidores com mais de um caracter
+                    if lexema == '>':
+                        if codigo[j+1] == '>' or codigo[j+1] == '=':
+                            continue
+                    if lexema == '<':
+                        if codigo[j+1] == '<' or codigo[j+1] == '=':
+                            continue
+                    if lexema == '=':
+                        if codigo[j+1] == '=':
+                            continue
+                    if lexema == '+':
+                        if codigo[j+1] == '+':
+                            continue
+                    if lexema == '-':
+                        if codigo[j+1] == '-':
+                            continue
+                    if lexema == '!':
+                        if codigo[j+1] == '=':
+                            continue
+                    if lexema == '/':
+                        if codigo[j+1] == '/':
+                            break
                 for key, value in atribuidores_parentizacao.items():
                     if key == lexema:
                         tokens.append(value)
@@ -121,14 +148,11 @@ def analisar():
 app = ctk.CTk()
 
 app.title("Analisador Léxico")
-app.geometry("1280x650")
-app.grid_columnconfigure((0,1,2,3), weight=1)
+app.geometry("1000x600")
+app.grid_columnconfigure((0,1,2), weight=1)
 app.grid_rowconfigure((0,1,2,3), weight=1)
-app.resizable(False, False)
 
 #area para escrever
-label = ctk.CTkLabel(app, text="Código:")
-label.grid(row=0, column=0, padx=10)
 textBox = ctk.CTkTextbox(app)
 textBox.grid(row=0, column=0, rowspan=3, columnspan=4, sticky="nsew", padx=(10, 300), pady=10)
 
@@ -137,6 +161,6 @@ textBoxResult = ctk.CTkTextbox(app, state="disabled")
 textBoxResult.grid(row=0, column=2, rowspan=3, columnspan=2, sticky="nsew", padx=(890, 10), pady=10)
 
 btnAnalisar = ctk.CTkButton(app, text="Analisar", command=analisar)
-btnAnalisar.grid(row=3, column=1, columnspan=2, sticky="nsew", padx=10, pady=10)
+btnAnalisar.grid(row=3, column=1, sticky="nsew", padx=10, pady=10)
 
 app.mainloop()
