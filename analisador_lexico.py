@@ -24,6 +24,7 @@ def analisar():
     linha = []
     
     comentario_bloco = False
+    is_string = False
     
     textBoxResult.configure(state="normal")
     textBoxResult.delete('1.0', 'end')
@@ -35,6 +36,7 @@ def analisar():
         lexema = ''
         #pega o texto que esta na linha
         codigo = textBox.get(f'{i}.0', f'{i}.end')
+        
         #percorre o texto da linha
         for j in range(len(codigo)):
             if '*\\' in codigo:
@@ -49,15 +51,29 @@ def analisar():
                     if codigo[j+1] == '*':
                         comentario_bloco = True
                         break
-            if codigo[j] in atribuidores_parentizacao:
+            elif is_string:
+                if codigo[j] == '"':
+                    is_string = False
+                    for key, value in valores_dos_dados.items():
+                        if key == 'nomedastring':
+                            tokens.append(value)
+                            codigos.append(lexema)
+                            linha.append(i)
+                            lexema = ''
+                lexema = lexema + codigo[j]
+            elif codigo[j] in atribuidores_parentizacao:
                 lexema = lexema + codigo[j]
                 if j+1 < len(codigo):
                     if lexema + codigo[j+1] in atribuidores_duplos:
                         continue
+            elif codigo[j] == '"':
+                is_string = True
             elif codigo[j] != ' ':
                 lexema = lexema + codigo[j]
             else:
                 lexema = ''
+                
+                
             if lexema in atribuidores_duplos:
                 for key, value in atribuidores_duplos.items():
                     if key == lexema:
@@ -94,7 +110,8 @@ def analisar():
                             linha.append(i)
                             lexema = ''
                         break
-            if j+1 < len(codigo):
+            #verifica se é declaração de variavel
+            elif j+1 < len(codigo):
                 if codigo[j+1] == ',' or codigo[j+1] == ':':
                     for key, value in valores_dos_dados.items():
                         if key == 'nomevariavel':
@@ -104,18 +121,19 @@ def analisar():
                             lexema = ''
                             break
             
+            
+            
+            
+            
+            
+            
+            
+            
     #coloca o resultado da analise lexica no espaço destinado
     textBoxResult.configure(state="normal")
     for i in range(len(tokens)):
         textBoxResult.insert('end', f'Token: {tokens[i]} - Lexema {codigos[i]} - Linha: {linha[i]}\n')
     textBoxResult.configure(state="disabled")
-
-
-
-
-
-
-
 
 #interface grafica
 app = ctk.CTk()
