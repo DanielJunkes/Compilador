@@ -1,7 +1,4 @@
 import customtkinter as ctk
-import sys
-
-
 
 #dicionario com as palavras reservadas
 palavras_reservadas = {'while': 1, 'void': 2, 'string': 3, 'return': 4, 'main': 11, 'literal': 12, 'integer': 13, 'inicio': 14, 'if': 15, 
@@ -26,9 +23,11 @@ def analisar():
     codigos = []
     linha = []
     
+    #variaveis de controle
     comentario_bloco = False
     is_text = False
     
+    #limpa o espaço para mostrar o resultado da analise lexica
     textBoxResult.configure(state="normal")
     textBoxResult.delete('1.0', 'end')
     textBoxResult.configure(state="disabled")
@@ -42,6 +41,7 @@ def analisar():
         
         #percorre o texto da linha
         for j in range(len(codigo)):
+            #verifica se tem *\ na linha do para finalizar o comentario em bloco
             if '*\\' in codigo:
                 comentario_bloco = False
                 break
@@ -66,17 +66,22 @@ def analisar():
                             break
                 else:
                     lexema = lexema + codigo[j]
+            #verifica se é um dos possiveis atribuidores ou parenteses 
             elif codigo[j] in atribuidores_parentizacao:
                 lexema = lexema + codigo[j]
                 if j+1 < len(codigo):
+                    #verifica se juntando o prox caracter com o atual forma um atribuidor duplo
                     if lexema + codigo[j+1] in atribuidores_duplos:
                         continue
+            #verifica se o caracter atual é um numero e se o lexema esta vazio
             elif codigo[j].isnumeric() and lexema == '':
                 lexema = lexema + codigo[j]
                 if j+1 < len(codigo):
                     if codigo[j+1].isnumeric() or codigo[j+1] == '.':
                         continue
+                    #se o prox caracter for vazio ou um atribuidor ou parentes, salva 
                     if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
+                        #verifica se é float
                         if '.' in lexema:
                             for key, value in valores_dos_dados.items():
                                 if key == 'numerofloat':
@@ -93,6 +98,7 @@ def analisar():
                                     linha.append(i)
                                     lexema = ''
                                     break
+                #salva caso o numero for o ultimo caracter da linha
                 else:
                     if '.' in lexema:
                         for key, value in valores_dos_dados.items():
@@ -110,6 +116,7 @@ def analisar():
                                 linha.append(i)
                                 lexema = ''
                                 break
+            #verifica se o caracter atual inicia um texto
             elif codigo[j] in textos:
                 is_text = True
             elif codigo[j] != ' ':
@@ -117,7 +124,7 @@ def analisar():
             else:
                 lexema = ''
                 
-                
+            #verifica se o lexema esta dentro do dicionario de atribuidores duplos    
             if lexema in atribuidores_duplos:
                 for key, value in atribuidores_duplos.items():
                     if key == lexema:
@@ -126,6 +133,7 @@ def analisar():
                         linha.append(i)
                         lexema = ''
                         break
+            #verifica se o lexema esta dentro do dicionario de atribuidores simples
             elif lexema in atribuidores_parentizacao:
                 for key, value in atribuidores_parentizacao.items():
                     if key == lexema:
@@ -164,6 +172,7 @@ def analisar():
                             linha.append(i)
                             lexema = ''
                             break
+            #verifica se o lexema ja estra dentro dos codigos, se estiver salva novamente pq é variavel
             if lexema in codigos:
                     for key, value in valores_dos_dados.items():
                         if key == 'nomevariavel':
@@ -172,15 +181,7 @@ def analisar():
                             linha.append(i)
                             lexema = ''
                             break
-            
-            
-            
-            
-            
-            
-            
-            
-            
+                        
     #coloca o resultado da analise lexica no espaço destinado
     textBoxResult.configure(state="normal")
     for i in range(len(tokens)):
