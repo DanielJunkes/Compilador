@@ -7,7 +7,7 @@ palavras_reservadas = {'while': 1, 'void': 2, 'string': 3, 'return': 4, 'main': 
 
 #dicionario com atribuidores e parentizacao
 #nome provisório
-atribuidores_parentizacao = {'>': 28, '=': 30, '<': 33, '+': 35, '{': 36, '}': 37, ';': 38, ':': 39, 
+atribuidores_parentizacao = {'>': 28, '=': 30, '<': 33, '+': 35, '}': 36, '{': 37, ';': 38, ':': 39, 
                              '/': 40, ',': 41, '*': 42, '(': 43, ')': 44, '$': 45, '-': 48}
 atribuidores_duplos = {'>>': 26, '>=': 27, '==': 29, '<=': 31, '<<': 32,'++': 34, '!=': 46, '--': 47}
 
