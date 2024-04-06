@@ -76,7 +76,7 @@ def analisar():
                     if lexema + codigo[j+1] in atribuidores_duplos:
                         continue
             #verifica se o caracter atual é um numero e se o lexema esta vazio
-            elif codigo[j].isnumeric() and lexema == '':
+            elif codigo[j].isnumeric():
                 lexema = lexema + codigo[j]
                 if j+1 < len(codigo):
                     if codigo[j+1].isnumeric() or codigo[j+1] == '.':
@@ -85,10 +85,11 @@ def analisar():
                     if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
                         #verifica se é float
                         if '.' in lexema:
-                            casa_decimal = lexema.split('.')
-                            if len(casa_decimal[1]) > 2:
-                                print(f'Erro na linha {i}: valor do tipo float excedeu o limite de 2 casas decimais')
-                            else:
+                            casa_deciamal = lexema.split('.')[1]
+                            if len(casa_deciamal) > 2:
+                                print(f'Erro na linha {i} - Numero de casas decimais maior que o permitido')
+                                lexema = ''
+                            else:   
                                 for key, value in valores_dos_dados.items():
                                     if key == 'numerofloat':
                                         tokens.append(value)
@@ -107,16 +108,18 @@ def analisar():
                 #salva caso o numero for o ultimo caracter da linha
                 else:
                     if '.' in lexema:
-                        if lexema.split('.')[1] > 99:
-                                print(f'Erro na linha {i}: valor do tipo float excedeu o limite de 2 casas decimais')
-                        else:
-                            for key, value in valores_dos_dados.items():
-                                if key == 'numerofloat':
-                                    tokens.append(value)
-                                    codigos.append(lexema)
-                                    linha.append(i)
-                                    lexema = ''
-                                    break
+                            casa_deciamal = lexema.split('.')[1]
+                            if len(casa_deciamal) > 2:
+                                print(f'Erro na linha {i} - Numero de casas decimais maior que o permitido')
+                                lexema = ''
+                            else: 
+                                for key, value in valores_dos_dados.items():
+                                    if key == 'numerofloat':
+                                        tokens.append(value)
+                                        codigos.append(lexema)
+                                        linha.append(i)
+                                        lexema = ''
+                                        break
                     else:
                         for key, value in valores_dos_dados.items():
                             if key == 'numerointeiro':
