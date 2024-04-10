@@ -18,11 +18,48 @@ valores_dos_dados = {'numerointeiro': 5, 'numerofloat': 6, 'nomevariavel': 7, 'n
 #dicionatio com simbolos que iniciam textos
 textos = {'"': 10, "'": 8, '|': 7}
 
+#lista com os codigos
+tokens = []
+codigos = []
+linha = []
+
+#funcao que ira verificar os numeros e salvar
+def salvar_numeros(lexema, i):
+    if '.' in lexema:
+        casa_decimal = lexema.split('.')[1]
+        if len(casa_decimal) > 2:
+            print(f'Erro na linha {i} - Numero de casas decimais maior que o permitido')
+            lexema = ''
+            return lexema
+        else:   
+            for key, value in valores_dos_dados.items():
+                if key == 'numerofloat':
+                    tokens.append(value)
+                    codigos.append(lexema)
+                    linha.append(i)
+                    lexema = ''
+                    return lexema
+    else:
+        num = int(lexema)
+        if num > 99999:
+            print(f'Erro na linha {i} - Numero maior que o permitido')
+            lexema = ''
+            return lexema
+        else:
+            for key, value in valores_dos_dados.items():
+                if key == 'numerointeiro':
+                    tokens.append(value)
+                    codigos.append(lexema)
+                    linha.append(i)
+                    lexema = ''
+                    return lexema
+
 def analisar():
-    #lista para salvar os tokens e codigos
-    tokens = []
-    codigos = []
-    linha = []
+
+    #limpa os dados das listas
+    tokens.clear()
+    codigos.clear()
+    linha.clear()
     
     #variaveis de controle
     comentario_bloco = False
@@ -83,73 +120,20 @@ def analisar():
                 if j+1 < len(codigo):
                     #verifica se juntando o prox caracter com o atual forma um atribuidor duplo
                     if lexema + codigo[j+1] in atribuidores_duplos:
-                        continue      
-            #verifica se o caracter atual é um numero e se o lexema esta vazio
+                        continue
+            #verifica se o caracter atual é um numero
             elif codigo[j].isnumeric():
-                if lexema.isnumeric() == False or lexema != '':
-                    lexema = lexema + codigo[j]
-                else:
-                    lexema = lexema + codigo[j]
+                lexema = lexema + codigo[j]
+                if lexema.isnumeric() or '-' in lexema:
                     if j+1 < len(codigo):
                         if codigo[j+1].isnumeric() or codigo[j+1] == '.':
                             continue
                         #se o prox caracter for vazio ou um atribuidor ou parentes, salva 
                         if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
-                            #verifica se é float
-                            if '.' in lexema:
-                                casa_deciamal = lexema.split('.')[1]
-                                if len(casa_deciamal) > 2:
-                                    print(f'Erro na linha {i} - Numero de casas decimais maior que o permitido')
-                                    lexema = ''
-                                else:   
-                                    for key, value in valores_dos_dados.items():
-                                        if key == 'numerofloat':
-                                            tokens.append(value)
-                                            codigos.append(lexema)
-                                            linha.append(i)
-                                            lexema = ''
-                                            break
-                            else:
-                                num = int(lexema)
-                                if num > 99999:
-                                    print(f'Erro na linha {i} - Numero maior que o permitido')
-                                    lexema = ''
-                                else:
-                                    for key, value in valores_dos_dados.items():
-                                        if key == 'numerointeiro':
-                                            tokens.append(value)
-                                            codigos.append(lexema)
-                                            linha.append(i)
-                                            lexema = ''
-                                            break
+                            lexema = salvar_numeros(lexema, i)
                     #salva caso o numero for o ultimo caracter da linha
                     else:
-                        if '.' in lexema:
-                                casa_deciamal = lexema.split('.')[1]
-                                if len(casa_deciamal) > 2:
-                                    print(f'Erro na linha {i} - Numero de casas decimais maior que o permitido')
-                                    lexema = ''
-                                else: 
-                                    for key, value in valores_dos_dados.items():
-                                        if key == 'numerofloat':
-                                            tokens.append(value)
-                                            codigos.append(lexema)
-                                            linha.append(i)
-                                            lexema = ''
-                                            break
-                        else:
-                            num = int(lexema)
-                            if num > 99999:
-                                print(f'Erro na linha {i} - Numero maior que o permitido')
-                                lexema = ''
-                            else:
-                                for key, value in valores_dos_dados.items():
-                                    if key == 'numerointeiro':
-                                        tokens.append(value)
-                                        codigos.append(lexema)
-                                        linha.append(i)
-                                        lexema = ''
-                                        break
+                        lexema = salvar_numeros(lexema, i)
             #verifica se o caracter atual inicia um texto
             elif codigo[j] in textos:
                 is_text = True
@@ -218,6 +202,14 @@ def analisar():
                 if j+1 < len(codigo):
                     if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
                         for key, value in valores_dos_dados.items():
+                            if key == 'nomevariavel':
+                                tokens.append(value)
+                                codigos.append(lexema)
+                                linha.append(i)
+                                lexema = ''
+                                break
+                else:
+                    for key, value in valores_dos_dados.items():
                             if key == 'nomevariavel':
                                 tokens.append(value)
                                 codigos.append(lexema)
