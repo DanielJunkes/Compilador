@@ -129,24 +129,25 @@ def analisar():
                     if lexema + codigo[j+1] in atribuidores_duplos :
                         continue
                     if tokens != [] and codigo[j] == '-':
-                        if tokens[-1] != 5 or tokens[-1] != 6:
-                            a = salvar_numeros(lexema, i)
+                        if tokens[-1] == 5 or tokens[-1] == 6:
                             pass
-                    if tokens == [] and codigo[j] == '-':
+                        else:
+                            continue
+                    elif tokens == [] and codigo[j] == '-':
                         continue
             #verifica se o caracter atual é um numero
             elif codigo[j].isnumeric():
                 lexema = lexema + codigo[j]
-                if j+1 < len(codigo):
-                    if codigo[j+1].isnumeric() or codigo[j+1] == '.':
-                        continue
-                    #se o prox caracter for vazio ou um atribuidor ou parentes, salva 
-                    if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
+                if lexema.isnumeric() or '-' in lexema or '.' in lexema:
+                    if j+1 < len(codigo):
+                        if codigo[j+1].isnumeric() or codigo[j+1] == '.':
+                            continue
+                        #se o prox caracter for vazio ou um atribuidor ou parentes, salva 
+                        if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
+                            lexema = salvar_numeros(lexema, i)
+                    #salva caso o numero for o ultimo caracter da linha
+                    else:
                         lexema = salvar_numeros(lexema, i)
-                        print(lexema)
-                #salva caso o numero for o ultimo caracter da linha
-                else:
-                    lexema = salvar_numeros(lexema, i)
             #verifica se o caracter atual inicia um texto
             elif codigo[j] in textos:
                 is_text = True
@@ -210,8 +211,8 @@ def analisar():
                                 linha.append(i)
                                 lexema = ''
                                 break
-            #verifica se o lexema ja estra dentro dos codigos, se estiver salva novamente pq é variavel
-            if lexema in codigos:
+            #verifica se o lexema ja esta dentro dos codigos, se estiver salva novamente pq é variavel
+            elif lexema in codigos:
                 if j+1 < len(codigo):
                     if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
                         for key, value in valores_dos_dados.items():
@@ -229,7 +230,13 @@ def analisar():
                                 linha.append(i)
                                 lexema = ''
                                 break
-                            
+            elif lexema != '':
+                if j+1 < len(codigo):
+                    if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:    
+                        print(f'Erro lexico - Linha {i} - posicao {len(lexema) - j} - Palavra não reconhecida')
+                else: 
+                    print(f'Erro lexico - Linha {i} - posicao {len(lexema) - j} - Palavra não reconhecida')     
+                        
     #coloca o resultado da analise lexica no espaço destinado
     textBoxResult.configure(state="normal")
     for i in range(len(tokens)):
