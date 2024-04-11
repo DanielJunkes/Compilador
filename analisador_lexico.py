@@ -20,42 +20,48 @@ textos = {'"': 10, "'": 8, '|': 7}
 
 #lista com os codigos
 tokens = []
-codigos = []
-linha = []
+variaveis = []
+
+#funcao para escrever o resultado da analise na tela
+def escrever_textbox(texto=None, token=0, codigo=0, linha=0):
+    textBoxResult.configure(state='normal')
+    if token > 0:
+        textBoxResult.insert('end', f'Token: {token} | Lexema: {codigo} | Linha: {linha}\n')
+    if texto != None:
+        textBoxResult.insert('end', f'{texto}\n')
+    textBoxResult.configure(state='disabled')
 
 #funcao que ira verificar os numeros e salvar
-def salvar_numeros(lexema, i):
+def salvar_numeros(lexema, i, j):
     if '-' in lexema:
-        print(f'Erro na linha {i} - Numero negativo')
+        escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero negativo')
         lexema = ''
         return lexema
     if '.' in lexema:
         casa_decimal = lexema.split('.')[1]
         if len(casa_decimal) > 2:
-            print(f'Erro na linha {i} - Numero de casas decimais maior que o permitido')
+            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero de casas decimais maior que o permitido')
             lexema = ''
             return lexema
         else:   
             for key, value in valores_dos_dados.items():
                 if key == 'numerofloat':
                     tokens.append(value)
-                    codigos.append(lexema)
-                    linha.append(i)
+                    escrever_textbox(token=value, codigo=lexema, linha=i)
                     lexema = ''
                     return lexema
     else:
         num = int(lexema)
         
         if num > 99999:
-            print(f'Erro na linha {i} - Numero maior que o permitido')
+            escrever_textbox(f'- Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido')
             lexema = ''
             return lexema
         else:
             for key, value in valores_dos_dados.items():
                 if key == 'numerointeiro':
                     tokens.append(value)
-                    codigos.append(lexema)
-                    linha.append(i)
+                    escrever_textbox(token=value, codigo=lexema, linha=i)
                     lexema = ''
                     return lexema
 
@@ -63,8 +69,7 @@ def analisar():
 
     #limpa os dados das listas
     tokens.clear()
-    codigos.clear()
-    linha.clear()
+    variaveis.clear()
     
     #variaveis de controle
     comentario_bloco = False
@@ -86,6 +91,7 @@ def analisar():
         
         for j in range(len(codigo)):
             
+            #parte dos comentarios
             #verifica se tem *\ na linha do para finalizar o comentario em bloco
             if '*\\' in codigo:
                 comentario_bloco = False
@@ -99,28 +105,29 @@ def analisar():
                     if codigo[j+1] == '*':
                         comentario_bloco = True
                         break
+            #parte da string, char e literal
             elif is_text:
                 if codigo[j] in textos:
                     is_text = False
                     if codigo[j] == "'":
                         if len(lexema) > 1:
-                            print(f'Erro na linha {i} - char deve ter apenas 1 caracter')
+                            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - char deve ter apenas 1 caracter')
                             lexema = ''
                     elif codigo[j] == '"':
                         if len(lexema) > 20:
-                            print(f'Erro na linha {i} - string maior que o permitido (20 caracteres)')
+                            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - string maior que o permitido (20 caracteres)')
                             lexema = ''
                     if lexema != '':
                         for key, value in textos.items():
                             if key == codigo[j]:
                                 tokens.append(value)
-                                codigos.append(lexema)
-                                linha.append(i)
+                                escrever_textbox(token=value, codigo=lexema, linha=i)
                                 lexema = ''
                                 break
                 else:
                     lexema = lexema + codigo[j]
                     continue
+                
             #verifica se é um dos possiveis atribuidores ou parenteses 
             elif codigo[j] in atribuidores_parentizacao:
                 lexema = lexema + codigo[j]
@@ -135,6 +142,7 @@ def analisar():
                             continue
                     elif tokens == [] and codigo[j] == '-':
                         continue
+                    
             #verifica se o caracter atual é um numero
             elif codigo[j].isnumeric():
                 lexema = lexema + codigo[j]
@@ -144,10 +152,11 @@ def analisar():
                             continue
                         #se o prox caracter for vazio ou um atribuidor ou parentes, salva 
                         if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
-                            lexema = salvar_numeros(lexema, i)
+                            lexema = salvar_numeros(lexema, i, j)
                     #salva caso o numero for o ultimo caracter da linha
                     else:
-                        lexema = salvar_numeros(lexema, i)
+                        lexema = salvar_numeros(lexema, i, j)
+                        
             #verifica se o caracter atual inicia um texto
             elif codigo[j] in textos:
                 is_text = True
@@ -161,19 +170,19 @@ def analisar():
                 for key, value in atribuidores_duplos.items():
                     if key == lexema:
                         tokens.append(value)
-                        codigos.append(key)
-                        linha.append(i)
+                        escrever_textbox(token=value, codigo=lexema, linha=i)
                         lexema = ''
                         break
+                    
             #verifica se o lexema esta dentro do dicionario de atribuidores simples
             elif lexema in atribuidores_parentizacao:
                 for key, value in atribuidores_parentizacao.items():
                     if key == lexema:
                         tokens.append(value)
-                        codigos.append(key)
-                        linha.append(i)
+                        escrever_textbox(token=value, codigo=lexema, linha=i)
                         lexema = ''
                         break
+                    
             #verifica se o lexema esta dentro das palavras reservadas
             elif lexema in palavras_reservadas:
                 for key, value in palavras_reservadas.items():
@@ -181,69 +190,60 @@ def analisar():
                         if j+1 < len(codigo):
                             if codigo[j+1] in atribuidores_parentizacao or codigo[j+1] == ' ':
                                 tokens.append(value)
-                                codigos.append(key)
-                                linha.append(i)
+                                escrever_textbox(token=value, codigo=lexema, linha=i)
                                 lexema = ''
                             else:
-                                textBoxResult.configure(state="normal")
-                                textBoxResult.insert('end', f'Erro lexico - Linha {i} - posicao {len(lexema) - j}')
-                                textBoxResult.configure(state="disabled")
+                                continue
                         else:
                             tokens.append(value)
-                            codigos.append(key)
-                            linha.append(i)
+                            escrever_textbox(token=value, codigo=lexema, linha=i)
                             lexema = ''
                         break
+                    
             #verifica se é declaração de variavel
             elif j+1 < len(codigo):
                 if codigo[j+1] == ',' or codigo[j+1] == ':':
                     if len(lexema) > 10:
-                        print(f'Erro na linha {i} - Nome de variavel maior que o permitido')
+                        escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel maior que o permitido')
                         lexema = ''
                     elif re.search(r'\d', lexema):
-                        print(f'Erro na linha {i} - Nome de variavel não pode conter numeros')
+                        escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter numeros')
                         lexema = ''
                     else:
                         for key, value in valores_dos_dados.items():
                             if key == 'nomevariavel':
                                 tokens.append(value)
-                                codigos.append(lexema)
-                                linha.append(i)
+                                variaveis.append(lexema)
+                                escrever_textbox(token=value, codigo=lexema, linha=i)
                                 lexema = ''
                                 break
+                            
             #verifica se o lexema ja esta dentro dos codigos, se estiver salva novamente pq é variavel
-            elif lexema in codigos:
+            elif lexema in variaveis:
                 if j+1 < len(codigo):
                     if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
                         for key, value in valores_dos_dados.items():
                             if key == 'nomevariavel':
                                 tokens.append(value)
-                                codigos.append(lexema)
-                                linha.append(i)
-                                lexema = ''
+                                escrever_textbox(token=value, codigo=lexema, linha=i)
                                 break
                 else:
                     for key, value in valores_dos_dados.items():
                             if key == 'nomevariavel':
                                 tokens.append(value)
-                                codigos.append(lexema)
-                                linha.append(i)
+                                escrever_textbox(token=value, codigo=lexema, linha=i)
                                 lexema = ''
                                 break
+            #se o lexema não entrou em nenhuma opcao acima, é uma palavra que não existe na gramatica
             elif lexema != '':
                 if j+1 < len(codigo):
                     if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:    
-                        print(f'Erro lexico - Linha {i} - posicao {len(lexema) - j} - Palavra não reconhecida')
+                        escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Palavra não reconhecida')
                 else: 
-                    print(f'Erro lexico - Linha {i} - posicao {len(lexema) - j} - Palavra não reconhecida')     
-                        
-    #coloca o resultado da analise lexica no espaço destinado
-    textBoxResult.configure(state="normal")
-    for i in range(len(tokens)):
-        textBoxResult.insert('end', f'Token: {tokens[i]} - Lexema {codigos[i]} - Linha: {linha[i]}\n')
-    textBoxResult.configure(state="disabled")
+                    escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Palavra não reconhecida')
     
 def importar_arquivo():
+    
     #pega o caminho do arquivo
     arquivo = filedialog.askopenfile(mode='r', initialdir='./Desktop', title='Selecione um arquivo', filetypes=([('Arquivos de Texto', '*.txt')]))
     
@@ -273,9 +273,11 @@ textBox.grid(row=0, column=0, rowspan=3, columnspan=4, sticky="nsew", padx=(10, 
 textBoxResult = ctk.CTkTextbox(app, state="disabled")
 textBoxResult.grid(row=0, column=2, rowspan=3, columnspan=2, sticky="nsew", padx=(870, 10), pady=10)
 
+#botao d analisar
 btnAnalisar = ctk.CTkButton(app, text="Analisar", command=analisar)
 btnAnalisar.grid(row=3, column=0, columnspan=3, sticky="nsew", padx=10, pady=10)
 
+#botao para importar arquivo
 btnImportar = ctk.CTkButton(app, text="Importar Arquivo", command=importar_arquivo)
 btnImportar.grid(row=3, column=3, columnspan=2, sticky="nsew", padx=10, pady=10)
 
