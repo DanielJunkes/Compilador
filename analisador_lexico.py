@@ -25,6 +25,10 @@ linha = []
 
 #funcao que ira verificar os numeros e salvar
 def salvar_numeros(lexema, i):
+    if '-' in lexema:
+        print(f'Erro na linha {i} - Numero negativo')
+        lexema = ''
+        return lexema
     if '.' in lexema:
         casa_decimal = lexema.split('.')[1]
         if len(casa_decimal) > 2:
@@ -41,6 +45,7 @@ def salvar_numeros(lexema, i):
                     return lexema
     else:
         num = int(lexema)
+        
         if num > 99999:
             print(f'Erro na linha {i} - Numero maior que o permitido')
             lexema = ''
@@ -78,7 +83,9 @@ def analisar():
         #pega o texto que esta na linha
         codigo = textBox.get(f'{i}.0', f'{i}.end').strip('\t')
         #percorre o texto da linha
+        
         for j in range(len(codigo)):
+            
             #verifica se tem *\ na linha do para finalizar o comentario em bloco
             if '*\\' in codigo:
                 comentario_bloco = False
@@ -119,21 +126,27 @@ def analisar():
                 lexema = lexema + codigo[j]
                 if j+1 < len(codigo):
                     #verifica se juntando o prox caracter com o atual forma um atribuidor duplo
-                    if lexema + codigo[j+1] in atribuidores_duplos:
+                    if lexema + codigo[j+1] in atribuidores_duplos :
+                        continue
+                    if tokens != [] and codigo[j] == '-':
+                        if tokens[-1] != 5 or tokens[-1] != 6:
+                            a = salvar_numeros(lexema, i)
+                            pass
+                    if tokens == [] and codigo[j] == '-':
                         continue
             #verifica se o caracter atual é um numero
             elif codigo[j].isnumeric():
                 lexema = lexema + codigo[j]
-                if lexema.isnumeric() or '-' in lexema:
-                    if j+1 < len(codigo):
-                        if codigo[j+1].isnumeric() or codigo[j+1] == '.':
-                            continue
-                        #se o prox caracter for vazio ou um atribuidor ou parentes, salva 
-                        if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
-                            lexema = salvar_numeros(lexema, i)
-                    #salva caso o numero for o ultimo caracter da linha
-                    else:
+                if j+1 < len(codigo):
+                    if codigo[j+1].isnumeric() or codigo[j+1] == '.':
+                        continue
+                    #se o prox caracter for vazio ou um atribuidor ou parentes, salva 
+                    if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
                         lexema = salvar_numeros(lexema, i)
+                        print(lexema)
+                #salva caso o numero for o ultimo caracter da linha
+                else:
+                    lexema = salvar_numeros(lexema, i)
             #verifica se o caracter atual inicia um texto
             elif codigo[j] in textos:
                 is_text = True
