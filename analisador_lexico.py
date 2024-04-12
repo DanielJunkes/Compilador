@@ -210,13 +210,12 @@ def analisar():
                         escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter numeros')
                         lexema = ''
                     else:
-                        for key, value in valores_dos_dados.items():
-                            if key == 'nomevariavel':
-                                tokens.append(value)
-                                variaveis.append(lexema)
-                                escrever_textbox(token=value, codigo=lexema, linha=i)
-                                lexema = ''
-                                break
+                        token = valores_dos_dados.get('nomevariavel')
+                        tokens.append(token)
+                        variaveis.append(lexema)
+                        escrever_textbox(token=token, codigo=lexema, linha=i)
+                        lexema = ''
+                        break
                             
             #verifica se o lexema ja esta dentro dos codigos, se estiver salva novamente pq é variavel
             elif lexema in variaveis:
