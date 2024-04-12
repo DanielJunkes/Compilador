@@ -5,16 +5,13 @@ from tkinter import filedialog
 palavras_reservadas = {'while': 1, 'void': 2, 'string': 3, 'return': 4, 'main': 11, 'literal': 12, 'integer': 13, 'inicio': 14, 'if': 15, 
                        'for': 17, 'float': 18, 'fim': 19, 'else': 20, 'do': 21, 'cout': 22, 'cin': 23, 'char': 24, 
                        'callfuncao': 25}
-
 #dicionario com atribuidores e parentizacao
 #nome provisório
 atribuidores_parentizacao = {'>': 28, '=': 30, '<': 33, '+': 35, '}': 36, '{': 37, ';': 38, ':': 39, 
                              '/': 40, ',': 41, '*': 42, '(': 43, ')': 44, '$': 45, '-': 48}
 atribuidores_duplos = {'>>': 26, '>=': 27, '==': 29, '<=': 31, '<<': 32,'++': 34, '!=': 46, '--': 47}
-
 #dicionario com os tokens dos valores dos dados
 valores_dos_dados = {'numerointeiro': 5, 'numerofloat': 6, 'nomevariavel': 7, 'nomedochar': 8, 'nomedastring': 10}
-
 #dicionatio com simbolos que iniciam textos
 textos = {'"': 10, "'": 8, '|': 7}
 
@@ -32,39 +29,29 @@ def escrever_textbox(texto=None, token=0, codigo=0, linha=0):
     textBoxResult.configure(state='disabled')
 
 #funcao que ira verificar os numeros e salvar
-def salvar_numeros(lexema, i, j):
+def verificar_numeros(lexema, i, j):
     if '-' in lexema:
         escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero negativo')
-        lexema = ''
-        return lexema
-    if '.' in lexema:
+    elif '.' in lexema:
         casa_decimal = lexema.split('.')[1]
         if len(casa_decimal) > 2:
             escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero de casas decimais maior que o permitido')
-            lexema = ''
-            return lexema
         else:
             token = valores_dos_dados.get('numerofloat')
             tokens.append(token)
             escrever_textbox(token=token, codigo=lexema, linha=i)
-            lexema = ''
-            return lexema
     else:
         num = int(lexema)
-        
         if num > 99999:
             escrever_textbox(f'- Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido')
-            lexema = ''
-            return lexema
         else:
             token = valores_dos_dados.get('numerointeiro')
             tokens.append(token)
             escrever_textbox(token=token, codigo=lexema, linha=i)
-            lexema = ''
-            return lexema
+    lexema = ''
+    return lexema
 
 def analisar():
-
     #limpa os dados das listas
     tokens.clear()
     variaveis.clear()
@@ -72,26 +59,26 @@ def analisar():
     #variaveis de controle
     comentario_bloco = False
     is_text = False
-    
+
     #limpa o espaço para mostrar o resultado da analise lexica
     textBoxResult.configure(state="normal")
     textBoxResult.delete('1.0', 'end')
     textBoxResult.configure(state="disabled")
     
     #pega o numero de linhas
-    linhas = textBox.index('end-1c').split('.')[0] 
+    linhas = textBox.index('end-1c').split('.')[0]
     lexema = ''
-      
+    
     for i in range(1, int(linhas)+1):
         #pega o texto que esta na linha
         codigo = textBox.get(f'{i}.0', f'{i}.end').strip('\t')
-        #percorre o texto da linha
-        
+       
+        #percorre o texto da linha  
         for j in range(len(codigo)):
-            
+            print(lexema)
             #parte dos comentarios
-            #verifica se tem *\ na linha do para finalizar o comentario em bloco
-            if '*\\' in codigo:
+            #verifica se tem *\ na linha do para finalizar o comentario em bloco caso esteja em comentario
+            if '*\\' in codigo and comentario_bloco:
                 comentario_bloco = False
                 break
             if comentario_bloco:
@@ -131,6 +118,10 @@ def analisar():
                     #verifica se juntando o prox caracter com o atual forma um atribuidor duplo
                     if lexema + codigo[j+1] in atribuidores_duplos :
                         continue
+                    if lexema + codigo[j+1] == '*\\':
+                        print("and")
+                        continue
+                    #verificacao para definir o simbolo - como subtracao ou numero negativo
                     if tokens != [] and codigo[j] == '-':
                         if tokens[-1] == 5 or tokens[-1] == 6:
                             pass
@@ -148,10 +139,10 @@ def analisar():
                             continue
                         #se o prox caracter for vazio ou um atribuidor ou parentes, salva 
                         if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
-                            lexema = salvar_numeros(lexema, i, j)
+                            lexema = verificar_numeros(lexema, i, j)
                     #salva caso o numero for o ultimo caracter da linha
                     else:
-                        lexema = salvar_numeros(lexema, i, j)
+                        lexema = verificar_numeros(lexema, i, j)
                         
             #verifica se o caracter atual inicia um texto
             elif codigo[j] in textos:
@@ -220,6 +211,7 @@ def analisar():
                     tokens.append(token)
                     escrever_textbox(token=token, codigo=lexema, linha=i)
                     lexema = ''
+                    
             #se o lexema não entrou em nenhuma opcao acima, é uma palavra que não existe na gramatica
             elif lexema != '':
                 if j+1 < len(codigo):
@@ -228,8 +220,8 @@ def analisar():
                 else: 
                     escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Palavra não reconhecida')
     
-def importar_arquivo():
     
+def importar_arquivo():
     #pega o caminho do arquivo
     arquivo = filedialog.askopenfile(mode='r', initialdir='./Desktop', title='Selecione um arquivo', filetypes=([('Arquivos de Texto', '*.txt')]))
     
