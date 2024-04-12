@@ -43,13 +43,12 @@ def salvar_numeros(lexema, i, j):
             escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero de casas decimais maior que o permitido')
             lexema = ''
             return lexema
-        else:   
-            for key, value in valores_dos_dados.items():
-                if key == 'numerofloat':
-                    tokens.append(value)
-                    escrever_textbox(token=value, codigo=lexema, linha=i)
-                    lexema = ''
-                    return lexema
+        else:
+            token = valores_dos_dados.get('numerofloat')
+            tokens.append(token)
+            escrever_textbox(token=token, codigo=lexema, linha=i)
+            lexema = ''
+            return lexema
     else:
         num = int(lexema)
         
@@ -58,12 +57,11 @@ def salvar_numeros(lexema, i, j):
             lexema = ''
             return lexema
         else:
-            for key, value in valores_dos_dados.items():
-                if key == 'numerointeiro':
-                    tokens.append(value)
-                    escrever_textbox(token=value, codigo=lexema, linha=i)
-                    lexema = ''
-                    return lexema
+            token = valores_dos_dados.get('numerointeiro')
+            tokens.append(token)
+            escrever_textbox(token=token, codigo=lexema, linha=i)
+            lexema = ''
+            return lexema
 
 def analisar():
 
@@ -118,12 +116,10 @@ def analisar():
                             escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - string maior que o permitido (20 caracteres)')
                             lexema = ''
                     if lexema != '':
-                        for key, value in textos.items():
-                            if key == codigo[j]:
-                                tokens.append(value)
-                                escrever_textbox(token=value, codigo=lexema, linha=i)
-                                lexema = ''
-                                break
+                            token = textos.get(codigo[j])
+                            tokens.append(token)
+                            escrever_textbox(token=token, codigo=lexema, linha=i)
+                            lexema = ''
                 else:
                     lexema = lexema + codigo[j]
                     continue
@@ -167,38 +163,32 @@ def analisar():
                 
             #verifica se o lexema esta dentro do dicionario de atribuidores duplos    
             if lexema in atribuidores_duplos:
-                for key, value in atribuidores_duplos.items():
-                    if key == lexema:
-                        tokens.append(value)
-                        escrever_textbox(token=value, codigo=lexema, linha=i)
-                        lexema = ''
-                        break
-                    
+                token = atribuidores_duplos.get(lexema)
+                tokens.append(token)
+                escrever_textbox(token=token, codigo=lexema, linha=i)
+                lexema = ''
+            
             #verifica se o lexema esta dentro do dicionario de atribuidores simples
             elif lexema in atribuidores_parentizacao:
-                for key, value in atribuidores_parentizacao.items():
-                    if key == lexema:
-                        tokens.append(value)
-                        escrever_textbox(token=value, codigo=lexema, linha=i)
-                        lexema = ''
-                        break
-                    
+                token = atribuidores_parentizacao.get(lexema)
+                tokens.append(token)
+                escrever_textbox(token=token, codigo=lexema, linha=i)
+                lexema = ''
+                
             #verifica se o lexema esta dentro das palavras reservadas
             elif lexema in palavras_reservadas:
-                for key, value in palavras_reservadas.items():
-                    if key == lexema:
-                        if j+1 < len(codigo):
-                            if codigo[j+1] in atribuidores_parentizacao or codigo[j+1] == ' ':
-                                tokens.append(value)
-                                escrever_textbox(token=value, codigo=lexema, linha=i)
-                                lexema = ''
-                            else:
-                                continue
-                        else:
-                            tokens.append(value)
-                            escrever_textbox(token=value, codigo=lexema, linha=i)
-                            lexema = ''
-                        break
+                token = palavras_reservadas.get(lexema)
+                if j+1 < len(codigo):
+                    if codigo[j+1] in atribuidores_parentizacao or codigo[j+1] == ' ':
+                        tokens.append(token)
+                        escrever_textbox(token=token, codigo=lexema, linha=i)
+                        lexema = ''
+                    else:
+                        continue
+                else:
+                    tokens.append(token)
+                    escrever_textbox(token=token, codigo=lexema, linha=i)
+                    lexema = ''
                     
             #verifica se é declaração de variavel
             elif j+1 < len(codigo):
@@ -221,18 +211,15 @@ def analisar():
             elif lexema in variaveis:
                 if j+1 < len(codigo):
                     if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
-                        for key, value in valores_dos_dados.items():
-                            if key == 'nomevariavel':
-                                tokens.append(value)
-                                escrever_textbox(token=value, codigo=lexema, linha=i)
-                                break
+                        token = valores_dos_dados.get('nomevariavel')
+                        tokens.append(token)
+                        escrever_textbox(token=token, codigo=lexema, linha=i)
+                        lexema = ''
                 else:
-                    for key, value in valores_dos_dados.items():
-                            if key == 'nomevariavel':
-                                tokens.append(value)
-                                escrever_textbox(token=value, codigo=lexema, linha=i)
-                                lexema = ''
-                                break
+                    token = valores_dos_dados.get('nomevariavel')
+                    tokens.append(token)
+                    escrever_textbox(token=token, codigo=lexema, linha=i)
+                    lexema = ''
             #se o lexema não entrou em nenhuma opcao acima, é uma palavra que não existe na gramatica
             elif lexema != '':
                 if j+1 < len(codigo):
