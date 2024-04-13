@@ -6,7 +6,6 @@ palavras_reservadas = {'while': 1, 'void': 2, 'string': 3, 'return': 4, 'main': 
                        'for': 17, 'float': 18, 'fim': 19, 'else': 20, 'do': 21, 'cout': 22, 'cin': 23, 'char': 24, 
                        'callfuncao': 25}
 #dicionario com atribuidores e parentizacao
-#nome provisório
 atribuidores_parentizacao = {'>': 28, '=': 30, '<': 33, '+': 35, '}': 36, '{': 37, ';': 38, ':': 39, 
                              '/': 40, ',': 41, '*': 42, '(': 43, ')': 44, '$': 45, '-': 48}
 atribuidores_duplos = {'>>': 26, '>=': 27, '==': 29, '<=': 31, '<<': 32,'++': 34, '!=': 46, '--': 47}
@@ -17,7 +16,8 @@ textos = {'"': 10, "'": 8, '|': 7}
 
 #lista com os codigos
 tokens = []
-variaveis = []
+
+
 
 #funcao para escrever o resultado da analise na tela
 def escrever_textbox(texto=None, token=0, codigo=0, linha=0):
@@ -54,7 +54,6 @@ def verificar_numeros(lexema, i, j):
 def analisar():
     #limpa os dados das listas
     tokens.clear()
-    variaveis.clear()
     
     #variaveis de controle
     comentario_bloco = False
@@ -73,14 +72,18 @@ def analisar():
         #pega o texto que esta na linha
         codigo = textBox.get(f'{i}.0', f'{i}.end').strip('\t')
        
+       
         #percorre o texto da linha  
         for j in range(len(codigo)):
-            print(lexema)
             #parte dos comentarios
             #verifica se tem *\ na linha do para finalizar o comentario em bloco caso esteja em comentario
-            if '*\\' in codigo and comentario_bloco:
-                comentario_bloco = False
-                break
+            if '*\\' in codigo:
+                if comentario_bloco:
+                    comentario_bloco = False
+                    break
+                else:
+                    escrever_textbox(f'Aviso - Linha {i} - Comentario de bloco não foi iniciado')
+                    codigo = codigo.replace('*\\', '##')
             if comentario_bloco:
                 break
             if codigo[j] == '\\':
@@ -116,10 +119,7 @@ def analisar():
                 lexema = lexema + codigo[j]
                 if j+1 < len(codigo):
                     #verifica se juntando o prox caracter com o atual forma um atribuidor duplo
-                    if lexema + codigo[j+1] in atribuidores_duplos :
-                        continue
-                    if lexema + codigo[j+1] == '*\\':
-                        print("and")
+                    if lexema + codigo[j+1] in atribuidores_duplos:
                         continue
                     #verificacao para definir o simbolo - como subtracao ou numero negativo
                     if tokens != [] and codigo[j] == '-':
@@ -129,7 +129,7 @@ def analisar():
                             continue
                     elif tokens == [] and codigo[j] == '-':
                         continue
-                    
+                
             #verifica se o caracter atual é um numero
             elif codigo[j].isnumeric():
                 lexema = lexema + codigo[j]
@@ -151,6 +151,7 @@ def analisar():
                 lexema = lexema + codigo[j]
             else:
                 lexema = ''
+                continue
                 
             #verifica se o lexema esta dentro do dicionario de atribuidores duplos    
             if lexema in atribuidores_duplos:
@@ -182,43 +183,43 @@ def analisar():
                     lexema = ''
                     
             #verifica se é declaração de variavel
-            elif j+1 < len(codigo):
-                if codigo[j+1] == ',' or codigo[j+1] == ':':
+            else:    
+                if j+1 < len(codigo):
+                    if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
+                        if len(lexema) > 10:
+                            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel maior que o permitido')
+                            lexema = ''
+                        elif re.search(r'\d', lexema):
+                            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter numeros')
+                            lexema = ''
+                        else:
+                            if re.search(r'[@_!#$%|^&*()<>?/\\}{~:]', lexema):
+                                escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter caracteres especiais')
+                                lexema = ''
+                            else:
+                                token = valores_dos_dados.get('nomevariavel')
+                                tokens.append(token)
+                                escrever_textbox(token=token, codigo=lexema, linha=i)
+                                lexema = ''
+                                
+                else:
                     if len(lexema) > 10:
                         escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel maior que o permitido')
                         lexema = ''
                     elif re.search(r'\d', lexema):
                         escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter numeros')
                         lexema = ''
-                    else:
-                        token = valores_dos_dados.get('nomevariavel')
-                        tokens.append(token)
-                        variaveis.append(lexema)
-                        escrever_textbox(token=token, codigo=lexema, linha=i)
-                        lexema = ''
-                        break
+                    else: 
+                        if re.search(r'[@_!#$%|^&*()<>?/\\}{~:]', lexema):
+                            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter caracteres especiais')
+                            lexema = ''
+                        else:
+                            token = valores_dos_dados.get('nomevariavel')
+                            tokens.append(token)
+                            escrever_textbox(token=token, codigo=lexema, linha=i)
+                            lexema = ''
                             
-            #verifica se o lexema ja esta dentro dos codigos, se estiver salva novamente pq é variavel
-            elif lexema in variaveis:
-                if j+1 < len(codigo):
-                    if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
-                        token = valores_dos_dados.get('nomevariavel')
-                        tokens.append(token)
-                        escrever_textbox(token=token, codigo=lexema, linha=i)
-                        lexema = ''
-                else:
-                    token = valores_dos_dados.get('nomevariavel')
-                    tokens.append(token)
-                    escrever_textbox(token=token, codigo=lexema, linha=i)
-                    lexema = ''
-                    
-            #se o lexema não entrou em nenhuma opcao acima, é uma palavra que não existe na gramatica
-            elif lexema != '':
-                if j+1 < len(codigo):
-                    if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:    
-                        escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Palavra não reconhecida')
-                else: 
-                    escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Palavra não reconhecida')
+
     
     
 def importar_arquivo():
