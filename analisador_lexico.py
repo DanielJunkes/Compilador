@@ -12,7 +12,7 @@ atribuidores_duplos = {'>>': 26, '>=': 27, '==': 29, '<=': 31, '<<': 32,'++': 34
 #dicionario com os tokens dos valores dos dados
 valores_dos_dados = {'numerointeiro': 5, 'numerofloat': 6, 'nomevariavel': 7, 'nomedochar': 8, 'nomedastring': 10}
 #dicionatio com simbolos que iniciam textos
-textos = {'"': 10, "'": 8, '|': 7}
+textos = {'"': 10, "'": 8, '|': 7} #10 string, 8 char e 7 literal
 
 #lista com os codigos
 tokens = []
@@ -33,9 +33,11 @@ def verificar_numeros(lexema, i, j):
     if '-' in lexema:
         escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero negativo')
     elif '.' in lexema:
-        casa_decimal = lexema.split('.')[1]
-        if len(casa_decimal) > 2:
+        numero_split = lexema.split('.')
+        if len(numero_split[1]) > 2:
             escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero de casas decimais maior que o permitido')
+        elif len(numero_split[0]) > 5:
+            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido')
         else:
             token = valores_dos_dados.get('numerofloat')
             tokens.append(token)
@@ -43,13 +45,27 @@ def verificar_numeros(lexema, i, j):
     else:
         num = int(lexema)
         if num > 99999:
-            escrever_textbox(f'- Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido')
+            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido')
         else:
             token = valores_dos_dados.get('numerointeiro')
             tokens.append(token)
             escrever_textbox(token=token, codigo=lexema, linha=i)
     lexema = ''
     return lexema
+
+def verificar_variavel(lexema, i, j):
+    if len(lexema) > 10:
+        escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel maior que o permitido')
+    elif re.search(r'\d', lexema):
+        escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter numeros')
+    else:
+        if re.search(r'[@_!#$%|^&*()<>?/\\}{~:]', lexema):
+            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter caracteres especiais')
+        else:
+            token = valores_dos_dados.get('nomevariavel')
+            tokens.append(token)
+            escrever_textbox(token=token, codigo=lexema, linha=i)
+            
 
 def analisar():
     #limpa os dados das listas
@@ -58,6 +74,8 @@ def analisar():
     #variaveis de controle
     comentario_bloco = False
     is_text = False
+    #saber qual tipo de aspas foi aberta
+    tipo_text = ''
 
     #limpa o espaço para mostrar o resultado da analise lexica
     textBoxResult.configure(state="normal")
@@ -83,7 +101,7 @@ def analisar():
                     break
                 else:
                     escrever_textbox(f'Aviso - Linha {i} - Comentario de bloco não foi iniciado')
-                    codigo = codigo.replace('*\\', '##')
+                    codigo = codigo.replace('*\\', '  ')
             if comentario_bloco:
                 break
             if codigo[j] == '\\':
@@ -97,19 +115,24 @@ def analisar():
             elif is_text:
                 if codigo[j] in textos:
                     is_text = False
-                    if codigo[j] == "'":
-                        if len(lexema) > 1:
-                            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - char deve ter apenas 1 caracter')
-                            lexema = ''
-                    elif codigo[j] == '"':
-                        if len(lexema) > 20:
-                            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - string maior que o permitido (20 caracteres)')
-                            lexema = ''
-                    if lexema != '':
-                            token = textos.get(codigo[j])
-                            tokens.append(token)
-                            escrever_textbox(token=token, codigo=lexema, linha=i)
-                            lexema = ''
+                    if tipo_text == codigo[j]:
+                        if codigo[j] == "'":
+                            if len(lexema) > 1:
+                                escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - char deve ter apenas 1 caracter')
+                                lexema = ''
+                        elif codigo[j] == '"':
+                            if len(lexema) > 20:
+                                escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - string maior que o permitido (20 caracteres)')
+                                lexema = ''
+                        if lexema != '':
+                                token = textos.get(codigo[j])
+                                tokens.append(token)
+                                escrever_textbox(token=token, codigo=lexema, linha=i)
+                                lexema = ''
+                    else:
+                        escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema)} - Textos devem começar e finalizar com o mesmo tipo de aspas')
+                        lexema = ''
+                    tipo_text = ''
                 else:
                     lexema = lexema + codigo[j]
                     continue
@@ -147,6 +170,7 @@ def analisar():
             #verifica se o caracter atual inicia um texto
             elif codigo[j] in textos:
                 is_text = True
+                tipo_text = codigo[j]
             elif codigo[j] != ' ':
                 lexema = lexema + codigo[j]
             else:
@@ -183,44 +207,15 @@ def analisar():
                     lexema = ''
                     
             #verifica se é declaração de variavel
-            else:    
+            elif lexema != '':    
                 if j+1 < len(codigo):
                     if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
-                        if len(lexema) > 10:
-                            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel maior que o permitido')
-                            lexema = ''
-                        elif re.search(r'\d', lexema):
-                            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter numeros')
-                            lexema = ''
-                        else:
-                            if re.search(r'[@_!#$%|^&*()<>?/\\}{~:]', lexema):
-                                escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter caracteres especiais')
-                                lexema = ''
-                            else:
-                                token = valores_dos_dados.get('nomevariavel')
-                                tokens.append(token)
-                                escrever_textbox(token=token, codigo=lexema, linha=i)
-                                lexema = ''
-                                
+                        verificar_variavel(lexema, i, j)
+                        lexema = ''
                 else:
-                    if len(lexema) > 10:
-                        escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel maior que o permitido')
-                        lexema = ''
-                    elif re.search(r'\d', lexema):
-                        escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter numeros')
-                        lexema = ''
-                    else: 
-                        if re.search(r'[@_!#$%|^&*()<>?/\\}{~:]', lexema):
-                            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter caracteres especiais')
-                            lexema = ''
-                        else:
-                            token = valores_dos_dados.get('nomevariavel')
-                            tokens.append(token)
-                            escrever_textbox(token=token, codigo=lexema, linha=i)
-                            lexema = ''
-                            
+                    verificar_variavel(lexema, i, j)
+                    lexema = ''
 
-    
     
 def importar_arquivo():
     #pega o caminho do arquivo
