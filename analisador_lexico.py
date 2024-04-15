@@ -17,8 +17,6 @@ textos = {'"': 10, "'": 8, '|': 7} #10 string, 8 char e 7 literal
 #lista com os codigos
 tokens = []
 
-
-
 #funcao para escrever o resultado da analise na tela
 def escrever_textbox(texto=None, token=0, codigo=0, linha=0):
     textBoxResult.configure(state='normal')
@@ -50,8 +48,6 @@ def verificar_numeros(lexema, i, j):
             token = valores_dos_dados.get('numerointeiro')
             tokens.append(token)
             escrever_textbox(token=token, codigo=lexema, linha=i)
-    lexema = ''
-    return lexema
 
 def verificar_variavel(lexema, i, j):
     if len(lexema) > 10:
@@ -162,10 +158,12 @@ def analisar():
                             continue
                         #se o prox caracter for vazio ou um atribuidor ou parentes, salva 
                         if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
-                            lexema = verificar_numeros(lexema, i, j)
+                            verificar_numeros(lexema, i, j)
+                            lexema = ''
                     #salva caso o numero for o ultimo caracter da linha
                     else:
-                        lexema = verificar_numeros(lexema, i, j)
+                        verificar_numeros(lexema, i, j)
+                        lexema = ''
                         
             #verifica se o caracter atual inicia um texto
             elif codigo[j] in textos:
