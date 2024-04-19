@@ -12,7 +12,7 @@ atribuidores_duplos = {'>>': 26, '>=': 27, '==': 29, '<=': 31, '<<': 32,'++': 34
 #dicionario com os tokens dos valores dos dados
 valores_dos_dados = {'numerointeiro': 5, 'numerofloat': 6, 'nomevariavel': 7, 'nomedochar': 8, 'nomedastring': 10}
 #dicionatio com simbolos que iniciam textos
-textos = {'"': 10, "'": 8, '|': 7} #10 string, 8 char e 7 literal
+textos = {'"': 10, "'": 8, '|': 12} #10 string, 8 char e 12 literal
 
 #lista com os codigos
 tokens = []
@@ -55,7 +55,7 @@ def verificar_variavel(lexema, i, j):
     elif re.search(r'\d', lexema):
         escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter numeros')
     else:
-        if re.search(r'[@_!#$%|^&*()<>?/\\}{~:]', lexema):
+        if re.search(r'[@_!#$%|^&*()<>?/\\}{~:.]', lexema):
             escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter caracteres especiais')
         else:
             token = valores_dos_dados.get('nomevariavel')
@@ -85,7 +85,6 @@ def analisar():
     for i in range(1, int(linhas)+1):
         #pega o texto que esta na linha
         codigo = textBox.get(f'{i}.0', f'{i}.end').strip('\t')
-       
        
         #percorre o texto da linha  
         for j in range(len(codigo)):
@@ -239,11 +238,11 @@ app.resizable(False, False)
 label = ctk.CTkLabel(app, text="Código:")
 label.grid(row=0, column=0, padx=10)
 textBox = ctk.CTkTextbox(app)
-textBox.grid(row=0, column=0, rowspan=3, columnspan=4, sticky="nsew", padx=(10, 300), pady=10)
+textBox.grid(row=0, column=0, rowspan=3, columnspan=4, sticky="nsew", padx=(10, 320), pady=10)
 
 #area para mostrar analise lexica
 textBoxResult = ctk.CTkTextbox(app, state="disabled")
-textBoxResult.grid(row=0, column=2, rowspan=3, columnspan=2, sticky="nsew", padx=(870, 10), pady=10)
+textBoxResult.grid(row=0, column=2, rowspan=3, columnspan=2, sticky="nsew", padx=(810, 10), pady=10)
 
 #botao d analisar
 btnAnalisar = ctk.CTkButton(app, text="Analisar", command=analisar)
