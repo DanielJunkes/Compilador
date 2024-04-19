@@ -1,0 +1,10 @@
+void main{
+\\testando o analisador
+nome: string = "daniel junkes mafioleti"
+caracter: char = 'aaa'
+cout<<|hello world|
+\* arrumar essa parte 
+if else
+callfunc
+while*\
+}

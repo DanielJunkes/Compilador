@@ -90,12 +90,12 @@ def analisar():
             #parte dos comentarios
             #verifica se tem *\ na linha do para finalizar o comentario em bloco caso esteja em comentario
             if '*\\' in codigo:
-                if comentario_bloco:
-                    comentario_bloco = False
-                    break
-                else:
-                    escrever_textbox(f'Aviso - Linha {i} - Comentario de bloco não foi iniciado')
-                    codigo = codigo.replace('*\\', '  ')
+                    if comentario_bloco:
+                        comentario_bloco = False
+                        break
+                    else:
+                        escrever_textbox(f'Aviso - Linha {i} - Comentario de bloco não foi iniciado')
+                        codigo = codigo.replace('*\\', '  ')
             if comentario_bloco:
                 break
             if codigo[j] == '\\':
@@ -130,7 +130,6 @@ def analisar():
                 else:
                     lexema = lexema + codigo[j]
                     continue
-                
             #verifica se é um dos possiveis atribuidores ou parenteses 
             elif codigo[j] in atribuidores_parentizacao:
                 lexema = lexema + codigo[j]
@@ -146,7 +145,6 @@ def analisar():
                             continue
                     elif tokens == [] and codigo[j] == '-':
                         continue
-                
             #verifica se o caracter atual é um numero
             elif codigo[j].isnumeric():
                 lexema = lexema + codigo[j]
@@ -162,7 +160,6 @@ def analisar():
                     else:
                         verificar_numeros(lexema, i, j)
                         lexema = ''
-                        
             #verifica se o caracter atual inicia um texto
             elif codigo[j] in textos:
                 is_text = True

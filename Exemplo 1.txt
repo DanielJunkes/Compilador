@@ -1,0 +1,13 @@
+void main{
+num: integer = 10
+inicio
+cout<<num
+'a'
+"aaa"
+|aaaaa|
+-10
+1.800
+num = 11
+if else
+fim
+}

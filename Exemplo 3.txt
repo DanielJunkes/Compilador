@@ -1,0 +1,11 @@
+nome = "algum nome"
+nome2 = "outro nome"
+seraQueVaiFuncionarBem: 's'
+nome@ = "nome"
+cout<<|aaaaaa
+if(){
+idade = *\ 13
+}
+else{
+}
+
