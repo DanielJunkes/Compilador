@@ -41,8 +41,7 @@ def verificar_numeros(lexema, i, j):
             tokens.append(token)
             escrever_textbox(token=token, codigo=lexema, linha=i)
     else:
-        num = int(lexema)
-        if num > 99999:
+        if len(lexema) > 5:
             escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido')
         else:
             token = valores_dos_dados.get('numerointeiro')
@@ -215,7 +214,7 @@ def analisar():
     if is_text:
         escrever_textbox(f'Erro - Um dado do tipo texto foi iniciado mas não finalizado')
     if comentario_bloco:
-        escrever_textbox(f'Aviso - Um comentario de bloco foi iniciado mas não finalizado')	
+        escrever_textbox(f'Erro - Um comentario de bloco foi iniciado mas não finalizado')	
 
     
 def importar_arquivo():
