@@ -212,6 +212,10 @@ def analisar():
                 else:
                     verificar_variavel(lexema, i, j)
                     lexema = ''
+    if is_text:
+        escrever_textbox(f'Erro - Um dado do tipo texto foi iniciado mas não finalizado')
+    if comentario_bloco:
+        escrever_textbox(f'Aviso - Um comentario de bloco foi iniciado mas não finalizado')	
 
     
 def importar_arquivo():
