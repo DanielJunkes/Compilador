@@ -92,12 +92,12 @@ class AnalisadorSintatico:
     producaoInicial = 1
     inicioNaoTerminais = 49
     
-    pilha = producoes.get(producaoInicial)
-    # Criação das tabelas  num de colunas     num de linhas
-    tabela = [[0 for _ in range(49)] for _ in range(33)]
-    
     pilhaAnterior=[]
     umaVez=False
+    
+    pilha = producoes.get(producaoInicial) + ["$"]
+    # Criação das tabelas  num de colunas     num de linhas
+    tabela = [[0 for _ in range(49)] for _ in range(33)]
     
     def __init__(self):
         self.__iniciarMatriz()
@@ -190,6 +190,7 @@ class AnalisadorSintatico:
         self.tabela[1][2]=1
         self.tabela[2][2]=3
         self.tabela[2][3]=3
+        self.tabela[2][7]=2
         self.tabela[2][13]=3
         self.tabela[2][16]=3
         self.tabela[2][18]=3
@@ -333,6 +334,7 @@ class AnalisadorSintatico:
         return numeroProducao
 
     def analisar(self, entrada):
+        print(self.tabela)
         while True:
             print(f"pilha:{self.pilha} \nsentenca: {entrada}\n")
             
@@ -342,22 +344,22 @@ class AnalisadorSintatico:
                 i=0
                 
                 for linha in self.tabela:
+                    print(f'linha: {linha}')
                     if i == 0:
                         colunaTerminal = linha.index(entrada[0])
                     if linha[0] == self.pilha[0]:
                         linhaNaoTerminal = i
                     i += 1
                 
-                # print(linhaNaoTerminal, colunaTerminal)
+                print(linhaNaoTerminal, colunaTerminal)
                 numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
                 adicionarAPilha = self.producoes.get(numeroProducao) 
                 self.pilha.pop(0)
-                self.pilha = adicionarAPilha +self.pilha
+                self.pilha = adicionarAPilha + self.pilha
                 
             elif self.pilha[0] == entrada[0]:
                 self.pilha.pop(0)
                 entrada.pop(0)
-            
             if self.umaVez:
                 break
             if self.pilha == self.pilhaAnterior:

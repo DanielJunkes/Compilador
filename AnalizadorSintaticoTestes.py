@@ -360,7 +360,7 @@ while True:
     if umaVez:
         break
     if pilha == pilhaAnterior:
-     umaVez = True
+        umaVez = True
     if not sentenca:
         break
     pilhaAnterior=pilha

@@ -214,7 +214,8 @@ def analisar():
     if comentario_bloco:
         escrever_textbox(f'Erro - Um comentario de bloco foi iniciado mas não finalizado')
         
-    AnalisadorSintatico.analisar(self=AnalisadorSintatico, entrada=tokens)
+    analisadorSintatico = AnalisadorSintatico()
+    analisadorSintatico.analisar(entrada=tokens)
 
     
 def importar_arquivo():
