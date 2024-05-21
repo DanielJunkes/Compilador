@@ -94,8 +94,9 @@ class AnalisadorSintatico:
     
     pilhaAnterior=[]
     umaVez=False
+    duasVezes=False
     
-    pilha = producoes.get(producaoInicial) + ["$"]
+    pilha = producoes.get(producaoInicial)
     # Criação das tabelas  num de colunas     num de linhas
     tabela = [[0 for _ in range(49)] for _ in range(33)]
     
@@ -199,14 +200,14 @@ class AnalisadorSintatico:
         self.tabela[3][3]=13
         self.tabela[3][13]=13
         self.tabela[3][14]=19
-        # tabela[3][16]=19
+        self.tabela[3][16]=19 # vazaio
         self.tabela[3][18]=13
         self.tabela[3][24]=13
         self.tabela[4][14]=31
         self.tabela[5][2]=4
         self.tabela[5][3]=4
         self.tabela[5][13]=4
-        # tabela[5][16]=4
+        self.tabela[5][16]=4 # vazaio
         self.tabela[5][18]=4
         self.tabela[5][24]=4
         self.tabela[5][39]=4
@@ -228,7 +229,7 @@ class AnalisadorSintatico:
         self.tabela[10][13]=14
         self.tabela[10][18]=17
         self.tabela[10][24]=16
-        # tabela[11][16]=26
+        self.tabela[11][16]=26 # vazaio
         self.tabela[11][37]=26
         self.tabela[11][44]=27
         self.tabela[12][5]=20
@@ -236,7 +237,7 @@ class AnalisadorSintatico:
         self.tabela[12][7]=22
         self.tabela[12][8]=23
         self.tabela[12][10]=24
-        # tabela[12][16]=25
+        self.tabela[12][16]=25 # vazaio
         self.tabela[12][43]=25
         self.tabela[13][13]=28
         self.tabela[13][18]=28
@@ -249,7 +250,7 @@ class AnalisadorSintatico:
         self.tabela[15][8]=26
         self.tabela[15][10]=35
         self.tabela[15][15]=48
-        # tabela[15][16]=37
+        self.tabela[15][16]=37 # vazaio
         self.tabela[15][17]=63
         self.tabela[15][21]=68
         self.tabela[15][22]=68
@@ -259,7 +260,7 @@ class AnalisadorSintatico:
         self.tabela[16][7]=33
         self.tabela[16][8]=33
         self.tabela[16][10]=33
-        # tabela[16][16]=32
+        self.tabela[16][16]=32 # vazaio
         self.tabela[16][19]=32
         self.tabela[16][25]=33
         self.tabela[16][36]=32
@@ -269,7 +270,7 @@ class AnalisadorSintatico:
         self.tabela[17][9]=73
         self.tabela[17][25]=74
         self.tabela[17][44]=73
-        # tabela[18][16]=39
+        self.tabela[18][16]=39 # vazaio
         self.tabela[18][38]=39
         self.tabela[18][43]=39
         self.tabela[18][44]=40
@@ -278,7 +279,7 @@ class AnalisadorSintatico:
         self.tabela[19][7]=47
         self.tabela[19][8]=46
         self.tabela[19][10]=44
-        # tabela[20][16]=41
+        self.tabela[20][16]=41 # vazaio
         self.tabela[20][38]=41
         self.tabela[20][43]=41
         self.tabela[20][44]=42
@@ -288,7 +289,7 @@ class AnalisadorSintatico:
         self.tabela[21][31]=57
         self.tabela[21][33]=56
         self.tabela[21][46]=53
-        # tabela[22][16]=50
+        self.tabela[22][16]=50 # vazaio
         self.tabela[22][20]=49
         self.tabela[22][38]=50
         self.tabela[23][5]=58
@@ -298,10 +299,10 @@ class AnalisadorSintatico:
         self.tabela[23][10]=60
         self.tabela[24][34]=64
         self.tabela[24][47]=65
-        # tabela[25][16]=69
+        self.tabela[25][16]=69 # vazaio
         self.tabela[25][32]=70
         self.tabela[25][38]=69
-        # tabela[26][16]=71
+        self.tabela[26][16]=71 # vazaio
         self.tabela[26][38]=71
         self.tabela[26][41]=72
         self.tabela[29][5]=78
@@ -309,7 +310,7 @@ class AnalisadorSintatico:
         self.tabela[29][8]=78
         self.tabela[29][9]=78
         self.tabela[29][10]=78
-        # tabela[30][16]=77
+        self.tabela[30][16]=77 # vazaio
         self.tabela[30][35]=75
         self.tabela[30][38]=77
         self.tabela[30][43]=77
@@ -321,7 +322,7 @@ class AnalisadorSintatico:
         self.tabela[31][8]=86
         self.tabela[31][10]=85
         self.tabela[31][44]=87
-        # tabela[32][16]=79
+        self.tabela[32][16]=79 # vazaio
         self.tabela[32][35]=79
         self.tabela[32][40]=81
         self.tabela[32][42]=80
@@ -334,9 +335,12 @@ class AnalisadorSintatico:
         return numeroProducao
 
     def analisar(self, entrada):
-        print(self.tabela)
+        # for linha in self.tabela:
+        #     print(linha)
+        
         while True:
             print(f"pilha:{self.pilha} \nsentenca: {entrada}\n")
+            
             
             if self.pilha[0] >= self.inicioNaoTerminais:
                 linhaNaoTerminal=0
@@ -344,14 +348,17 @@ class AnalisadorSintatico:
                 i=0
                 
                 for linha in self.tabela:
-                    print(f'linha: {linha}')
+                    # print(f'linha: {linha}')
                     if i == 0:
                         colunaTerminal = linha.index(entrada[0])
                     if linha[0] == self.pilha[0]:
                         linhaNaoTerminal = i
                     i += 1
-                
+                numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
+                print(self.pilha[0] , entrada[0])
                 print(linhaNaoTerminal, colunaTerminal)
+                print(self.producoes.get(numeroProducao))
+                print(self.__acharNumProducao(linhaNaoTerminal, colunaTerminal), "\n")
                 numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
                 adicionarAPilha = self.producoes.get(numeroProducao) 
                 self.pilha.pop(0)
@@ -360,10 +367,32 @@ class AnalisadorSintatico:
             elif self.pilha[0] == entrada[0]:
                 self.pilha.pop(0)
                 entrada.pop(0)
-            if self.umaVez:
-                break
-            if self.pilha == self.pilhaAnterior:
-                self.umaVez = True
+            
+            # if self.duasVezes:
+            #     break
+            # if self.umaVez:
+            #     self.duasVezes = True
+            # if self.pilha == self.pilhaAnterior:
+            #     self.umaVez = True
             if not entrada:
                 break
             self.pilhaAnterior=self.pilha
+            
+if __name__ == "__main__":
+    # entrada = [2, 11, 37, 7, 16, 39, 9, 13, 7, 43, 13, 7, 44, 37, 7, 39, 7, 9, 14, 7, 30, 5, 9, 19, 4, 43, 7, 44, 9, 36, 14, 7, 30, 7, 9, 19, 36]
+    entrada = [2, 11, 37, 16, 16,14, 7, 30, 25,7,16,38, 16,19, 36] 
+    # [2, 11, 37, 16, 
+    #            16, 
+    #            14, 16,38, 
+    #            16,19, 36]
+    analisador = AnalisadorSintatico()
+    analisador.analisar(entrada)
+    
+    
+
+
+
+
+
+
+
