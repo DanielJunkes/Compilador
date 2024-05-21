@@ -1,6 +1,7 @@
 import re
 import customtkinter as ctk
 from tkinter import filedialog
+from AnalisadorSintatico import AnalisadorSintatico
 #dicionario com as palavras reservadas
 palavras_reservadas = {'while': 1, 'void': 2, 'string': 3, 'return': 4, 'main': 11, 'literal': 12, 'integer': 13, 'inicio': 14, 'if': 15, 
                        'for': 17, 'float': 18, 'fim': 19, 'else': 20, 'do': 21, 'cout': 22, 'cin': 23, 'char': 24, 
@@ -200,7 +201,7 @@ def analisar():
                     lexema = ''
                     
             #verifica se é declaração de variavel
-            elif lexema != '':    
+            elif lexema != '' and codigo[j] != '!':    
                 if j+1 < len(codigo):
                     if codigo[j+1] == ' ' or codigo[j+1] in atribuidores_parentizacao:
                         verificar_variavel(lexema, i, j)
@@ -211,7 +212,9 @@ def analisar():
     if is_text:
         escrever_textbox(f'Erro - Um dado do tipo texto foi iniciado mas não finalizado')
     if comentario_bloco:
-        escrever_textbox(f'Erro - Um comentario de bloco foi iniciado mas não finalizado')	
+        escrever_textbox(f'Erro - Um comentario de bloco foi iniciado mas não finalizado')
+        
+    AnalisadorSintatico.analisar(self=AnalisadorSintatico, entrada=tokens)
 
     
 def importar_arquivo():

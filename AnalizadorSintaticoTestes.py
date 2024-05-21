@@ -88,10 +88,11 @@ producoes = { 1: [2, 11, 37, 50, 51, 52, 36],
     87: [44, 65, 43]}
 
 pilha=[]
-producaoInicial = 1;
-inicioNaoTerminais = 6;
+producaoInicial = 1
+inicioNaoTerminais = 6
 
-pilha = producoes.get(producaoInicial);
+pilha = producoes.get(producaoInicial)
+
 # Criação das tabelas  num de colunas     num de linhas
 tabela = [[0 for _ in range(49)] for _ in range(33)]
 
@@ -320,7 +321,6 @@ def completarMatriz():
     tabela[32][42]=80
     tabela[32][48]=79
    
-
 completarMatriz()
 
 def acharNumProducao(naoTerminal, terminal):
@@ -328,24 +328,24 @@ def acharNumProducao(naoTerminal, terminal):
     # print(naoTerminal, terminal)
     # print(numeroProducao)
     return numeroProducao
-pilhaAnterior=[]
-umaVez=False;
 
-    
+pilhaAnterior=[]
+umaVez=False
+
 while True:
     print(f"pilha:{pilha} \nsentenca: {sentenca}\n")
     
     if pilha[0] >= inicioNaoTerminais:
-        linhaNaoTerminal=0;
-        colunaTerminal=0;
-        i=0;
+        linhaNaoTerminal=0
+        colunaTerminal=0
+        i=0
         
         for linha in tabela:
             if i == 0:
                 colunaTerminal = linha.index(sentenca[0])
             if linha[0] == pilha[0]:
-                linhaNaoTerminal = i;
-            i += 1;
+                linhaNaoTerminal = i
+            i += 1
         
         # print(linhaNaoTerminal, colunaTerminal)
         numeroProducao = acharNumProducao(linhaNaoTerminal, colunaTerminal)
@@ -357,13 +357,13 @@ while True:
         pilha.pop(0)
         sentenca.pop(0)
     
-    # if umaVez:
-    #     break
-    # if pilha == pilhaAnterior:
-    #     umaVez = True
+    if umaVez:
+        break
+    if pilha == pilhaAnterior:
+     umaVez = True
     if not sentenca:
         break
-    # pilhaAnterior=pilha
+    pilhaAnterior=pilha
 
 
 
