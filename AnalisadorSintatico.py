@@ -95,6 +95,7 @@ class AnalisadorSintatico:
     pilhaAnterior=[]
     umaVez=False
     duasVezes=False
+    numeroDeTentativas=0
     
     pilha = producoes.get(producaoInicial)
     # Criação das tabelas  num de colunas     num de linhas
@@ -193,9 +194,10 @@ class AnalisadorSintatico:
         self.tabela[2][3]=3
         self.tabela[2][7]=2
         self.tabela[2][13]=3
-        self.tabela[2][16]=3
+        self.tabela[2][14]=3
         self.tabela[2][18]=3
         self.tabela[2][24]=3
+        # Não verifique daqui para baixo
         self.tabela[3][2]=13
         self.tabela[3][3]=13
         self.tabela[3][13]=13
@@ -339,7 +341,7 @@ class AnalisadorSintatico:
         #     print(linha)
         
         while True:
-            print(f"pilha:{self.pilha} \nsentenca: {entrada}\n")
+            # print(f"pilha:{self.pilha} \nsentenca: {entrada}\n")
             
             
             if self.pilha[0] >= self.inicioNaoTerminais:
@@ -355,38 +357,51 @@ class AnalisadorSintatico:
                         linhaNaoTerminal = i
                     i += 1
                 numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
-                print(self.pilha[0] , entrada[0])
-                print(linhaNaoTerminal, colunaTerminal)
-                print(self.producoes.get(numeroProducao))
-                print(self.__acharNumProducao(linhaNaoTerminal, colunaTerminal), "\n")
-                numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
-                adicionarAPilha = self.producoes.get(numeroProducao) 
-                self.pilha.pop(0)
-                self.pilha = adicionarAPilha + self.pilha
+                if self.pilha[0]==16:
+                    self.pilha.pop(0)
+                elif numeroProducao==0:
+                    # print("Erro de sintaxe")
+                    return len(entrada)
+                else:
+                    # print(self.pilha[0] , entrada[0])
+                    # print(linhaNaoTerminal, colunaTerminal)
+                    # print(self.producoes.get(numeroProducao))
+                    # print(self.__acharNumProducao(linhaNaoTerminal, colunaTerminal), "\n")
+                    numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
+                    adicionarAPilha = self.producoes.get(numeroProducao) 
+                    self.pilha.pop(0)
+                    self.pilha = adicionarAPilha + self.pilha
                 
             elif self.pilha[0] == entrada[0]:
                 self.pilha.pop(0)
                 entrada.pop(0)
             
-            # if self.duasVezes:
-            #     break
-            # if self.umaVez:
-            #     self.duasVezes = True
-            # if self.pilha == self.pilhaAnterior:
-            #     self.umaVez = True
+            if self.pilha == self.pilhaAnterior:
+                if self.numeroDeTentativas == 17:
+                    # print("Erro de sintaxe 2")
+                    return len(entrada)
+                    
+                else:
+                    self.numeroDeTentativas += 1
+            else:
+                self.numeroDeTentativas = 0
             if not entrada:
-                break
+                if not self.pilha:
+                    return 0
+                return -1
             self.pilhaAnterior=self.pilha
             
+        
 if __name__ == "__main__":
     # entrada = [2, 11, 37, 7, 16, 39, 9, 13, 7, 43, 13, 7, 44, 37, 7, 39, 7, 9, 14, 7, 30, 5, 9, 19, 4, 43, 7, 44, 9, 36, 14, 7, 30, 7, 9, 19, 36]
-    entrada = [2, 11, 37, 16, 16,14, 7, 30, 25,7,16,38, 16,19, 36] 
+    entrada = [2, 11, 37, 14, 7, 30, 25,7,16,38, 16,19, 36]
     # [2, 11, 37, 16, 
     #            16, 
     #            14, 16,38, 
     #            16,19, 36]
     analisador = AnalisadorSintatico()
-    analisador.analisar(entrada)
+    resul = analisador.analisar(entrada)
+    # print(resul)
     
     
 
