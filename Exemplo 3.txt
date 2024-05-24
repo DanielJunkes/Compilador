@@ -4,7 +4,7 @@ void main{
     anoNasc: integer;
     idade: integer;
 
-    integer funcao (integer anoNasc;){
+    integer funcao (integer anoNasc){
         idade: integer;
         anoAtual: integer;
         inicio

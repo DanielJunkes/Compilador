@@ -249,7 +249,7 @@ class AnalisadorSintatico:
         
         #lparam 62
         self.tabela[13][38]=29
-        self.tabela[13][14]=30
+        self.tabela[13][43]=30
         
         #comando 63
         self.tabela[14][7]=34
