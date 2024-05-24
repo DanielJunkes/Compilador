@@ -369,7 +369,11 @@ completarMatriz()
 
 
 pilha = producoes.get(producaoInicial) + ["$"]
-sentenca = [2, 11, 37, 7, 39, 3, 38, 14, 19, 36]
+# sentenca = [2, 11, 37, 7, 39, 13, 38, 14, 8, 30, 10, 42, 8, 38, 19, 36]
+# sentenca = [2, 11, 37,14, 7, 30, 25,7, 38, 19, 36]
+# sentenca = [2, 11, 37, 14, 7, 30, 25,7, 38, 19, 36]
+# sentenca = [2, 11, 37, 14, 38, 19, 36]
+senteca = []
 
 def acharNumProducao(naoTerminal, terminal):
     numeroProducao=tabela[naoTerminal][terminal]
@@ -404,7 +408,7 @@ while pilha[0] != "$":
     else:
         break
 
-if pilha[0] == "$" and sentenca[0] == "$":
+if pilha[0] == "$":
     print("Sintaxe correta")
 else:
     print("Erro sintático")

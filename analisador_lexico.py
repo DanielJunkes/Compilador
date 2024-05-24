@@ -8,7 +8,7 @@ palavras_reservadas = {'while': 1, 'void': 2, 'string': 3, 'return': 4, 'main': 
                        'callfuncao': 25}
 #dicionario com atribuidores e parentizacao
 atribuidores_parentizacao = {'>': 28, '=': 30, '<': 33, '+': 35, '}': 36, '{': 37, ';': 38, ':': 39, 
-                             '/': 40, ',': 41, '*': 42, '(': 43, ')': 44, '$': 45, '-': 48}
+                             '/': 40, ',': 41, '*': 42, ')': 43, '(': 44, '$': 45, '-': 48}
 atribuidores_duplos = {'>>': 26, '>=': 27, '==': 29, '<=': 31, '<<': 32,'++': 34, '!=': 46, '--': 47}
 #dicionario com os tokens dos valores dos dados
 valores_dos_dados = {'numerointeiro': 5, 'numerofloat': 6, 'nomevariavel': 7, 'nomedochar': 8, 'nomedastring': 10}
@@ -17,8 +17,6 @@ textos = {'"': 10, "'": 8, '|': 12} #10 string, 8 char e 12 literal
 
 #lista com os codigos
 tokens = []
-
-historico=[]
 
 #funcao para escrever o resultado da analise na tela
 def escrever_textbox(texto=None, token=0, codigo=0, linha=0):
@@ -32,54 +30,43 @@ def escrever_textbox(texto=None, token=0, codigo=0, linha=0):
 #funcao que ira verificar os numeros e salvar
 def verificar_numeros(lexema, i, j):
     if '-' in lexema:
-        # escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero negativo')
-        historico.append(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero negativo')
+        escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero negativo')
     elif '.' in lexema:
         numero_split = lexema.split('.')
         if len(numero_split[1]) > 2:
-            # escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero de casas decimais maior que o permitido')
-            historico.append(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero de casas decimais maior que o permitido')
+            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero de casas decimais maior que o permitido')
         elif len(numero_split[0]) > 5:
-            # escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido')
-            historico.append(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido')
+            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido')
         else:
             token = valores_dos_dados.get('numerofloat')
             tokens.append(token)
-            # escrever_textbox(token=token, codigo=lexema, linha=i)
-            historico.append(f'Token: {token} | Lexema: {lexema} | Linha: {i}')
+            escrever_textbox(token=token, codigo=lexema, linha=i)
     else:
         if len(lexema) > 5:
-            # escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido')
-            historico.append(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido')
+            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido')
         else:
             token = valores_dos_dados.get('numerointeiro')
             tokens.append(token)
-            # escrever_textbox(token=token, codigo=lexema, linha=i)
-            historico.append(f'Token: {token} | Lexema: {lexema} | Linha: {i}')
+            escrever_textbox(token=token, codigo=lexema, linha=i)
 
 def verificar_variavel(lexema, i, j):
     if len(lexema) > 10:
-        # escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel maior que o permitido')
-        historico.append(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel maior que o permitido')
+        escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel maior que o permitido')
     elif re.search(r'\d', lexema):
-        # escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter numeros')
-        historico.append(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter numeros')
+        escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter numeros')
     else:
         if re.search(r'[@_!#$%|^&*()<>?/\\}{~:.]', lexema):
-            # escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter caracteres especiais')
-            historico.append(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter caracteres especiais')   
+            escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter caracteres especiais')
         else:
             token = valores_dos_dados.get('nomevariavel')
             tokens.append(token)
             escrever_textbox(token=token, codigo=lexema, linha=i)
-            historico.append(f'Token: {token} | Lexema: {lexema} | Linha: {i}')
             
 
 def analisar():
     #limpa os dados das listas
     tokens.clear()
-    historico=[]
-    localDoErroSintatico=0;
+    
     #variaveis de controle
     comentario_bloco = False
     is_text = False
@@ -109,7 +96,6 @@ def analisar():
                         break
                     else:
                         escrever_textbox(f'Aviso - Linha {i} - Comentario de bloco não foi iniciado')
-                        historico.append(f'Aviso - Linha {i} - Comentario de bloco não foi iniciado')
                         codigo = codigo.replace('*\\', '  ')
             if comentario_bloco:
                 break
@@ -128,22 +114,18 @@ def analisar():
                         if codigo[j] == "'":
                             if len(lexema) > 1:
                                 escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - char deve ter apenas 1 caracter')
-                                historico.append(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - char deve ter apenas 1 caracter')
                                 lexema = ''
                         elif codigo[j] == '"':
                             if len(lexema) > 20:
                                 escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - string maior que o permitido (20 caracteres)')
-                                historico.append(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - string maior que o permitido (20 caracteres)')
                                 lexema = ''
                         if lexema != '':
                                 token = textos.get(codigo[j])
                                 tokens.append(token)
                                 escrever_textbox(token=token, codigo=lexema, linha=i)
-                                historico.append(f'Token: {token} | Lexema: {lexema} | Linha: {i}')
                                 lexema = ''
                     else:
                         escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema)} - Textos devem começar e finalizar com o mesmo tipo de aspas')
-                        historico.append(f'Erro - Linha {i} - Posicao {j - len(lexema)} - Textos devem começar e finalizar com o mesmo tipo de aspas')
                         lexema = ''
                     tipo_text = ''
                 else:
@@ -193,16 +175,14 @@ def analisar():
             if lexema in atribuidores_duplos:
                 token = atribuidores_duplos.get(lexema)
                 tokens.append(token)
-                # escrever_textbox(token=token, codigo=lexema, linha=i)
-                historico.append(f'Token: {token} | Lexema: {lexema} | Linha: {i}')
+                escrever_textbox(token=token, codigo=lexema, linha=i)
                 lexema = ''
             
             #verifica se o lexema esta dentro do dicionario de atribuidores simples
             elif lexema in atribuidores_parentizacao:
                 token = atribuidores_parentizacao.get(lexema)
                 tokens.append(token)
-                # escrever_textbox(token=token, codigo=lexema, linha=i)
-                historico.append(f'Token: {token} | Lexema: {lexema} | Linha: {i}')
+                escrever_textbox(token=token, codigo=lexema, linha=i)
                 lexema = ''
                 
             #verifica se o lexema esta dentro das palavras reservadas
@@ -211,15 +191,13 @@ def analisar():
                 if j+1 < len(codigo):
                     if codigo[j+1] in atribuidores_parentizacao or codigo[j+1] == ' ':
                         tokens.append(token)
-                        # escrever_textbox(token=token, codigo=lexema, linha=i)
-                        historico.append(f'Token: {token} | Lexema: {lexema} | Linha: {i}')
+                        escrever_textbox(token=token, codigo=lexema, linha=i)
                         lexema = ''
                     else:
                         continue
                 else:
                     tokens.append(token)
-                    # escrever_textbox(token=token, codigo=lexema, linha=i)
-                    historico.append(f'Token: {token} | Lexema: {lexema} | Linha: {i}')
+                    escrever_textbox(token=token, codigo=lexema, linha=i)
                     lexema = ''
                     
             #verifica se é declaração de variavel
@@ -233,32 +211,16 @@ def analisar():
                     lexema = ''
     if is_text:
         escrever_textbox(f'Erro - Um dado do tipo texto foi iniciado mas não finalizado')
-        historico.append(f'Erro - Um dado do tipo texto foi iniciado mas não finalizado')
     if comentario_bloco:
         escrever_textbox(f'Erro - Um comentario de bloco foi iniciado mas não finalizado')
-        historico.append(f'Erro - Um comentario de bloco foi iniciado mas não finalizado')
         
-        
-    
-    
     analisadorSintatico = AnalisadorSintatico()
-    localDoErroSintatico = analisadorSintatico.analisar(entrada=tokens)
+    resultAnalise = analisadorSintatico.analisar(entrada=tokens)
+    if resultAnalise[0] == "$":
+        print("Sintaxe correta")
+    else:
+        print("Erro sintático")
     
-    for his in historico:
-        if localDoErroSintatico == 0:
-            # Não houve erro
-             escrever_textbox(his)
-        elif localDoErroSintatico == -1:
-            # código não foi encerrado
-            escrever_textbox("Erro sintatico, falta fechar o camando")
-            break
-        else: 
-            # Erro no meio do codigo
-            escrever_textbox("Erro sintatico:")
-            escrever_textbox(his)
-            print(localDoErroSintatico)
-            break
-        print("psoou")
     
 def importar_arquivo():
     #pega o caminho do arquivo

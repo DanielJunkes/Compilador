@@ -2,15 +2,15 @@ class AnalisadorSintatico:
     
     producoes = { 1: [2, 11, 37, 50, 51, 52, 36], 
         2: [7, 53, 39, 54, 38, 55], 
-        3: [16], 
-        4: [16], 
+        3: [ ], 
+        4: [ ], 
         5: [41, 7, 53],
         6: [13], 
         7: [18], 
         8: [3], 
         9: [24], 
         10: [57, 39, 54, 38, 55],
-        11: [16], 
+        11: [ ], 
         12: [7, 53], 
         13: [58, 7, 59, 37, 50,51, 52, 4, 44, 60, 43, 36, 51], 
         14: [13], 
@@ -18,29 +18,29 @@ class AnalisadorSintatico:
         16: [24], 
         17: [18], 
         18: [3], 
-        19: [16], 
+        19: [ ], 
         20: [5],
         21: [6], 
         22: [7], 
         23: [8], 
         24: [10], 
-        25: [16],
-        26: [16], 
+        25: [ ],
+        26: [ ], 
         27: [44, 61, 43], 
         28: [54, 7, 62], 
         29: [38, 54, 7, 62],
-        30: [16],
+        30: [ ],
         31: [14, 63, 38, 64,19], 
-        32: [16], 
+        32: [ ], 
         33: [63, 38, 64], 
         34: [7, 30, 65], 
         35: [10, 30, 65],
         36: [8, 30, 65], 
-        37: [16], 
+        37: [ ], 
         38: [25, 7, 66], 
-        39: [16],
+        39: [ ],
         40: [44, 67, 68, 43],
-        41: [16], 
+        41: [ ], 
         42: [44, 67, 68, 43], 
         43: [5], 
         44: [10], 
@@ -49,7 +49,7 @@ class AnalisadorSintatico:
         47: [7], 
         48: [15, 44, 7, 69, 43, 37, 63, 38, 64, 36, 70] , 
         49: [20, 37, 63, 38, 64, 36], 
-        50: [16],
+        50: [ ],
         51: [1, 44, 7, 69, 43, 37, 63, 38, 64, 36], 
         52: [29, 71], 
         53: [46, 71], 
@@ -67,15 +67,15 @@ class AnalisadorSintatico:
         66: [21, 37, 63, 38, 64, 36, 1, 44, 7, 69, 43], 
         67: [23, 26, 7], 
         68: [22, 32, 12, 73], 
-        69: [16], 
+        69: [ ], 
         70: [32, 7, 74, 73],
-        71: [16], 
+        71: [ ], 
         72: [41,7,74], 
         73: [77,78], 
         74: [25,7,66], 
-        77: [16], 
+        77: [ ], 
         78: [79,80], 
-        79: [16], 
+        79: [ ], 
         80: [42,79,80],
         81: [40,79,80], 
         82: [5], 
@@ -85,15 +85,9 @@ class AnalisadorSintatico:
         86: [8], 
         87: [44, 65, 43]}
     
-    pilha=[]
     producaoInicial = 1
     inicioNaoTerminais = 49
-    
-    pilhaAnterior=[]
-    umaVez=False
-    duasVezes=False
-    numeroDeTentativas=0
-    
+
     # Criação das tabelas  num de colunas     num de linhas
     tabela = [[0 for _ in range(49)] for _ in range(33)]
     
@@ -190,20 +184,12 @@ class AnalisadorSintatico:
         self.tabela[2][2]=3 
         self.tabela[2][7]=2
         self.tabela[2][13]=3
-<<<<<<< HEAD
-        self.tabela[2][14]=3
-=======
->>>>>>> 737ad263ec5cc24b685ac218c6fb9fef080e8c8f
         self.tabela[2][18]=3
         self.tabela[2][3]=3
         self.tabela[2][24]=3
-<<<<<<< HEAD
-        # Não verifique daqui para baixo
-=======
         self.tabela[2][14]=3
         
         #dclfunc 51
->>>>>>> 737ad263ec5cc24b685ac218c6fb9fef080e8c8f
         self.tabela[3][2]=13
         self.tabela[3][13]=13
         self.tabela[3][18]=13
@@ -386,16 +372,9 @@ class AnalisadorSintatico:
         return numeroProducao
 
     def analisar(self, entrada):
-        
-<<<<<<< HEAD
-        while True:
-            # print(f"pilha:{self.pilha} \nsentenca: {entrada}\n")
-=======
         pilha = self.producoes.get(self.producaoInicial) + ["$"]
-    
         while pilha[0] != "$":
->>>>>>> 737ad263ec5cc24b685ac218c6fb9fef080e8c8f
-            
+    
             print(f"pilha:{pilha} \nsentenca: {entrada}\n")
             
             if pilha[0] >= self.inicioNaoTerminais:
@@ -409,71 +388,20 @@ class AnalisadorSintatico:
                     if linha[0] == pilha[0]:
                         linhaNaoTerminal = i
                     i += 1
-<<<<<<< HEAD
-                numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
-                if self.pilha[0]==16:
-                    self.pilha.pop(0)
-                elif numeroProducao==0:
-                    # print("Erro de sintaxe")
-                    return len(entrada)
-                else:
-                    # print(self.pilha[0] , entrada[0])
-                    # print(linhaNaoTerminal, colunaTerminal)
-                    # print(self.producoes.get(numeroProducao))
-                    # print(self.__acharNumProducao(linhaNaoTerminal, colunaTerminal), "\n")
-                    numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
-                    adicionarAPilha = self.producoes.get(numeroProducao) 
-                    self.pilha.pop(0)
-                    self.pilha = adicionarAPilha + self.pilha
-=======
                 
-                print(self.__acharNumProducao(linhaNaoTerminal, colunaTerminal), "\n")
+                print(f"Producao: {self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)}\n")
                 numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
                 adicionarAPilha = self.producoes.get(numeroProducao) 
                 pilha.pop(0)
                 pilha = adicionarAPilha + pilha
->>>>>>> 737ad263ec5cc24b685ac218c6fb9fef080e8c8f
                 
             elif pilha[0] == entrada[0]:
                 pilha.pop(0)
                 entrada.pop(0)
-            
-<<<<<<< HEAD
-            if self.pilha == self.pilhaAnterior:
-                if self.numeroDeTentativas == 17:
-                    # print("Erro de sintaxe 2")
-                    return len(entrada)
-                    
-                else:
-                    self.numeroDeTentativas += 1
             else:
-                self.numeroDeTentativas = 0
-            if not entrada:
-                if not self.pilha:
-                    return 0
-                return -1
-            self.pilhaAnterior=self.pilha
-=======
-            if not entrada:
                 break
->>>>>>> 737ad263ec5cc24b685ac218c6fb9fef080e8c8f
-            
-        
-if __name__ == "__main__":
-<<<<<<< HEAD
-    # entrada = [2, 11, 37, 7, 16, 39, 9, 13, 7, 43, 13, 7, 44, 37, 7, 39, 7, 9, 14, 7, 30, 5, 9, 19, 4, 43, 7, 44, 9, 36, 14, 7, 30, 7, 9, 19, 36]
-    entrada = [2, 11, 37, 14, 7, 30, 25,7,16,38, 16,19, 36]
-    # [2, 11, 37, 16, 
-    #            16, 
-    #            14, 16,38, 
-    #            16,19, 36]
-=======
-    entrada = [2, 11, 37, 7, 39, 3, 30, 10, 36]
-    
->>>>>>> 737ad263ec5cc24b685ac218c6fb9fef080e8c8f
-    analisador = AnalisadorSintatico()
-    resul = analisador.analisar(entrada)
-    # print(resul)
+        return pilha
+                
     
     
 
