@@ -8,7 +8,7 @@ void main{
         idade: integer;
         anoAtual: integer;
         inicio
-        idade = anoAtual - anoNasc;
+        idade = anoAtual + anoNasc;
         fim
         return (idade)}
 
