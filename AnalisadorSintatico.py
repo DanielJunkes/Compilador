@@ -55,7 +55,6 @@ class AnalisadorSintatico:
         53: [46, 71], 
         54: [28, 71], 
         55: [27, 71],
-        56: [33, 71], 
         57: [31, 71], 
         58: [5], 
         59: [6], 
@@ -74,8 +73,6 @@ class AnalisadorSintatico:
         72: [41,7,74], 
         73: [77,78], 
         74: [25,7,66], 
-        75: [35,77,78],
-        76: [48,77,78], 
         77: [16], 
         78: [79,80], 
         79: [16], 
@@ -97,7 +94,6 @@ class AnalisadorSintatico:
     duasVezes=False
     numeroDeTentativas=0
     
-    pilha = producoes.get(producaoInicial)
     # Criação das tabelas  num de colunas     num de linhas
     tabela = [[0 for _ in range(49)] for _ in range(33)]
     
@@ -105,6 +101,7 @@ class AnalisadorSintatico:
         self.__iniciarMatriz()
     
     def __iniciarMatriz(self):
+        self.tabela[0][1]=1
         self.tabela[0][2]=2
         self.tabela[0][3]=3
         self.tabela[0][4]=4
@@ -116,7 +113,6 @@ class AnalisadorSintatico:
         self.tabela[0][10]=10
         self.tabela[0][11]=11
         self.tabela[0][12]=12
-        self.tabela[0][1]=1
         self.tabela[0][13]=13
         self.tabela[0][14]=14
         self.tabela[0][15]=15
@@ -162,200 +158,258 @@ class AnalisadorSintatico:
         self.tabela[5][0]=53
         self.tabela[6][0]=54
         self.tabela[7][0]=55
-        self.tabela[8][0]=56
-        self.tabela[9][0]=57
-        self.tabela[10][0]=58
-        self.tabela[11][0]=59
-        self.tabela[12][0]=60
-        self.tabela[13][0]=61
-        self.tabela[14][0]=62
-        self.tabela[15][0]=63
-        self.tabela[16][0]=64
-        self.tabela[17][0]=65
-        self.tabela[18][0]=66
-        self.tabela[19][0]=67
-        self.tabela[20][0]=68
-        self.tabela[21][0]=69
-        self.tabela[22][0]=70
-        self.tabela[23][0]=71
-        self.tabela[24][0]=72
-        self.tabela[25][0]=73
-        self.tabela[26][0]=74
-        self.tabela[27][0]=75
-        self.tabela[28][0]=76
-        self.tabela[29][0]=77
-        self.tabela[30][0]=78
-        self.tabela[32][0]=79
-        self.tabela[32][0]=80
+        self.tabela[8][0]=57
+        self.tabela[9][0]=58
+        self.tabela[10][0]=59
+        self.tabela[11][0]=60
+        self.tabela[12][0]=61
+        self.tabela[13][0]=62
+        self.tabela[14][0]=63
+        self.tabela[15][0]=64
+        self.tabela[16][0]=65
+        self.tabela[17][0]=66
+        self.tabela[18][0]=67
+        self.tabela[19][0]=68
+        self.tabela[20][0]=69
+        self.tabela[21][0]=70
+        self.tabela[22][0]=71
+        self.tabela[23][0]=72
+        self.tabela[24][0]=73
+        self.tabela[25][0]=74
+        self.tabela[26][0]=77
+        self.tabela[27][0]=78
+        self.tabela[28][0]=79
+        self.tabela[29][0]=80
         
         #  Número das produções
-        self.tabela[1][2]=1
-        self.tabela[2][2]=3
-        self.tabela[2][3]=3
+        
+        #bloco 49 
+        self.tabela[1][2]=1 
+        
+        #dclvar 50
+        self.tabela[2][2]=3 
         self.tabela[2][7]=2
         self.tabela[2][13]=3
+<<<<<<< HEAD
         self.tabela[2][14]=3
+=======
+>>>>>>> 737ad263ec5cc24b685ac218c6fb9fef080e8c8f
         self.tabela[2][18]=3
+        self.tabela[2][3]=3
         self.tabela[2][24]=3
+<<<<<<< HEAD
         # Não verifique daqui para baixo
+=======
+        self.tabela[2][14]=3
+        
+        #dclfunc 51
+>>>>>>> 737ad263ec5cc24b685ac218c6fb9fef080e8c8f
         self.tabela[3][2]=13
-        self.tabela[3][3]=13
         self.tabela[3][13]=13
-        self.tabela[3][14]=19
-        self.tabela[3][16]=19 # vazaio
         self.tabela[3][18]=13
+        self.tabela[3][3]=13
         self.tabela[3][24]=13
+        self.tabela[3][14]=19
+        
+        #corpo 52
         self.tabela[4][14]=31
-        self.tabela[5][2]=4
-        self.tabela[5][3]=4
-        self.tabela[5][13]=4
-        self.tabela[5][16]=4 # vazaio
-        self.tabela[5][18]=4
-        self.tabela[5][24]=4
+        
+        #repident 53
         self.tabela[5][39]=4
         self.tabela[5][41]=5
-        self.tabela[6][3]=8
-        self.tabela[6][9]=9
-        self.tabela[6][13]=6
+        
+        #tipo 54
+        self.tabela[6][13]=6 
         self.tabela[6][18]=7
-        self.tabela[7][2]=11
-        self.tabela[7][3]=11
-        self.tabela[7][9]=10
+        self.tabela[6][3]=8
+        self.tabela[6][24]=9
+        
+        #ldvar 55
+        self.tabela[7][2]=11 
+        self.tabela[7][7]=10
         self.tabela[7][13]=11
-        self.tabela[7][16]=11
         self.tabela[7][18]=11
+        self.tabela[7][13]=11
         self.tabela[7][24]=11
-        self.tabela[9][7]=12
-        self.tabela[10][2]=15
-        self.tabela[10][3]=18
-        self.tabela[10][13]=14
-        self.tabela[10][18]=17
-        self.tabela[10][24]=16
-        self.tabela[11][16]=26 # vazaio
-        self.tabela[11][37]=26
-        self.tabela[11][44]=27
-        self.tabela[12][5]=20
-        self.tabela[12][6]=21
-        self.tabela[12][7]=22
-        self.tabela[12][8]=23
-        self.tabela[12][10]=24
-        self.tabela[12][16]=25 # vazaio
-        self.tabela[12][43]=25
-        self.tabela[13][13]=28
-        self.tabela[13][18]=28
-        self.tabela[13][24]=28
-        self.tabela[14][16]=30
-        self.tabela[14][38]=29
-        self.tabela[14][43]=30
-        self.tabela[15][1]=51
-        self.tabela[15][7]=34
-        self.tabela[15][8]=26
-        self.tabela[15][10]=35
-        self.tabela[15][15]=48
-        self.tabela[15][16]=37 # vazaio
-        self.tabela[15][17]=63
-        self.tabela[15][21]=68
-        self.tabela[15][22]=68
-        self.tabela[15][23]=68
-        self.tabela[15][25]=39
-        self.tabela[15][38]=37
-        self.tabela[16][7]=33
-        self.tabela[16][8]=33
-        self.tabela[16][10]=33
-        self.tabela[16][16]=32 # vazaio
-        self.tabela[16][19]=32
-        self.tabela[16][25]=33
-        self.tabela[16][36]=32
-        self.tabela[17][5]=73
-        self.tabela[17][6]=73
-        self.tabela[17][8]=73
-        self.tabela[17][9]=73
-        self.tabela[17][25]=74
-        self.tabela[17][44]=73
-        self.tabela[18][16]=39 # vazaio
-        self.tabela[18][38]=39
-        self.tabela[18][43]=39
-        self.tabela[18][44]=40
-        self.tabela[19][5]=43
-        self.tabela[19][6]=45
-        self.tabela[19][7]=47
-        self.tabela[19][8]=46
-        self.tabela[19][10]=44
-        self.tabela[20][16]=41 # vazaio
-        self.tabela[20][38]=41
-        self.tabela[20][43]=41
-        self.tabela[20][44]=42
-        self.tabela[21][27]=55
-        self.tabela[21][28]=54
-        self.tabela[21][29]=52
-        self.tabela[21][31]=57
-        self.tabela[21][33]=56
-        self.tabela[21][46]=53
-        self.tabela[22][16]=50 # vazaio
-        self.tabela[22][20]=49
-        self.tabela[22][38]=50
-        self.tabela[23][5]=58
-        self.tabela[23][6]=59
-        self.tabela[23][8]=61
-        self.tabela[23][9]=62
-        self.tabela[23][10]=60
-        self.tabela[24][34]=64
-        self.tabela[24][47]=65
-        self.tabela[25][16]=69 # vazaio
-        self.tabela[25][32]=70
-        self.tabela[25][38]=69
-        self.tabela[26][16]=71 # vazaio
-        self.tabela[26][38]=71
-        self.tabela[26][41]=72
-        self.tabela[29][5]=78
-        self.tabela[29][6]=78
-        self.tabela[29][8]=78
-        self.tabela[29][9]=78
-        self.tabela[29][10]=78
-        self.tabela[30][16]=77 # vazaio
-        self.tabela[30][35]=75
-        self.tabela[30][38]=77
-        self.tabela[30][43]=77
-        self.tabela[30][44]=78
-        self.tabela[30][48]=76
-        self.tabela[31][5]=82
-        self.tabela[31][6]=83
-        self.tabela[31][7]=84
-        self.tabela[31][8]=86
-        self.tabela[31][10]=85
-        self.tabela[31][44]=87
-        self.tabela[32][16]=79 # vazaio
-        self.tabela[32][35]=79
-        self.tabela[32][40]=81
-        self.tabela[32][42]=80
-        self.tabela[32][48]=79
+        self.tabela[7][14]=11
+        
+        #lid 57
+        self.tabela[8][7]=12 
+
+        #tipo_retorno 58
+        self.tabela[9][2]=15
+        self.tabela[9][13]=14
+        self.tabela[9][18]=17
+        self.tabela[9][3]=18
+        self.tabela[9][24]=16
+        
+        #defpar 59
+        self.tabela[10][37]=26
+        self.tabela[10][44]=27
+        
+        #valor_retorno 60
+        self.tabela[11][7]=22
+        self.tabela[11][43]=25
+        self.tabela[11][5]=20
+        self.tabela[11][6]=21
+        self.tabela[11][8]=23
+        self.tabela[11][10]=24
+        
+        #param 61
+        self.tabela[12][13]=28
+        self.tabela[12][18]=28
+        self.tabela[12][3]=28
+        self.tabela[12][24]=28
+        
+        #lparam 62
+        self.tabela[13][38]=29
+        self.tabela[13][14]=30
+        
+        #comando 63
+        self.tabela[14][7]=34
+        self.tabela[14][38]=37
+        self.tabela[14][8]=36
+        self.tabela[14][10]=35
+        self.tabela[14][25]=38
+        self.tabela[14][15]=48
+        self.tabela[14][1]=51
+        self.tabela[14][17]=63
+        self.tabela[14][21]=66
+        self.tabela[14][23]=67
+        self.tabela[14][22]=68
+        
+        #repcomando 64
+        self.tabela[15][36]=32
+        self.tabela[15][7]=33
+        self.tabela[15][38]=33
+        self.tabela[15][8]=33
+        self.tabela[15][10]=33
+        self.tabela[15][19]=32
+        self.tabela[15][25]=33
+        self.tabela[15][15]=33
+        self.tabela[15][1]=33
+        self.tabela[15][17]=33
+        self.tabela[15][21]=33
+        self.tabela[15][23]=33
+        self.tabela[15][22]=33
+        
+        #expressao 65
+        self.tabela[16][7]=73
+        self.tabela[16][44]=73
+        self.tabela[16][5]=73
+        self.tabela[16][6]=73
+        self.tabela[16][8]=73
+        self.tabela[16][10]=73
+        self.tabela[16][25]=74
+        
+        #parametros 66
+        self.tabela[17][38]=39
+        self.tabela[17][44]=40
+        self.tabela[17][43]=39
+
+        #tparam 67
+        self.tabela[18][7]=47
+        self.tabela[18][5]=43
+        self.tabela[18][6]=45
+        self.tabela[18][8]=46
+        self.tabela[18][10]=44
+        
+        #reppar 68
+        self.tabela[19][41]=42
+        self.tabela[19][43]=41
+        
+        #comparacao 69
+        self.tabela[20][29]=52
+        self.tabela[20][46]=53
+        self.tabela[20][28]=54
+        self.tabela[20][27]=55
+        self.tabela[20][33]=56
+        self.tabela[20][31]=57
+        
+        #elseparte 70
+        self.tabela[21][38]=50
+        self.tabela[21][20]=49
+
+        #contcomparcao 71
+        self.tabela[22][7]=62
+        self.tabela[22][5]=58
+        self.tabela[22][6]=59
+        self.tabela[22][8]=61
+        self.tabela[22][10]=60
+        
+        #incremento 72
+        self.tabela[23][34]=64
+        self.tabela[23][47]=65
+        
+        #seqcount 73
+        self.tabela[24][38]=69
+        self.tabela[24][32]=70
+        
+        #sequencia 74
+        self.tabela[25][38]=71
+        self.tabela[25][41]=72
+        self.tabela[25][32]=71
+        
+        #termo 77
+        self.tabela[26][7]=78
+        self.tabela[26][44]=78
+        self.tabela[26][5]=78
+        self.tabela[26][6]=78
+        self.tabela[26][8]=78
+        self.tabela[26][10]=78
+        
+        #repexp 78
+        self.tabela[27][38]=77
+        self.tabela[27][43]=77
+        self.tabela[27][35]=75
+        self.tabela[27][48]=76
+        
+        #fator 79
+        self.tabela[28][7]=84
+        self.tabela[28][44]=87
+        self.tabela[28][5]=82
+        self.tabela[28][6]=83
+        self.tabela[28][8]=86
+        self.tabela[28][10]=85
+        
+        #reptermo 80
+        self.tabela[29][38]=79
+        self.tabela[29][43]=79
+        self.tabela[29][35]=79
+        self.tabela[29][48]=79
+        self.tabela[29][42]=80
+        self.tabela[29][40]=81
+
         
     def __acharNumProducao(self, naoTerminal, terminal):
         numeroProducao=self.tabela[naoTerminal][terminal]
-        # print(naoTerminal, terminal)
-        # print(numeroProducao)
         return numeroProducao
 
     def analisar(self, entrada):
-        # for linha in self.tabela:
-        #     print(linha)
         
+<<<<<<< HEAD
         while True:
             # print(f"pilha:{self.pilha} \nsentenca: {entrada}\n")
+=======
+        pilha = self.producoes.get(self.producaoInicial) + ["$"]
+    
+        while pilha[0] != "$":
+>>>>>>> 737ad263ec5cc24b685ac218c6fb9fef080e8c8f
             
+            print(f"pilha:{pilha} \nsentenca: {entrada}\n")
             
-            if self.pilha[0] >= self.inicioNaoTerminais:
+            if pilha[0] >= self.inicioNaoTerminais:
                 linhaNaoTerminal=0
                 colunaTerminal=0
                 i=0
                 
                 for linha in self.tabela:
-                    # print(f'linha: {linha}')
                     if i == 0:
                         colunaTerminal = linha.index(entrada[0])
-                    if linha[0] == self.pilha[0]:
+                    if linha[0] == pilha[0]:
                         linhaNaoTerminal = i
                     i += 1
+<<<<<<< HEAD
                 numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
                 if self.pilha[0]==16:
                     self.pilha.pop(0)
@@ -371,11 +425,20 @@ class AnalisadorSintatico:
                     adicionarAPilha = self.producoes.get(numeroProducao) 
                     self.pilha.pop(0)
                     self.pilha = adicionarAPilha + self.pilha
+=======
                 
-            elif self.pilha[0] == entrada[0]:
-                self.pilha.pop(0)
+                print(self.__acharNumProducao(linhaNaoTerminal, colunaTerminal), "\n")
+                numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
+                adicionarAPilha = self.producoes.get(numeroProducao) 
+                pilha.pop(0)
+                pilha = adicionarAPilha + pilha
+>>>>>>> 737ad263ec5cc24b685ac218c6fb9fef080e8c8f
+                
+            elif pilha[0] == entrada[0]:
+                pilha.pop(0)
                 entrada.pop(0)
             
+<<<<<<< HEAD
             if self.pilha == self.pilhaAnterior:
                 if self.numeroDeTentativas == 17:
                     # print("Erro de sintaxe 2")
@@ -390,15 +453,24 @@ class AnalisadorSintatico:
                     return 0
                 return -1
             self.pilhaAnterior=self.pilha
+=======
+            if not entrada:
+                break
+>>>>>>> 737ad263ec5cc24b685ac218c6fb9fef080e8c8f
             
         
 if __name__ == "__main__":
+<<<<<<< HEAD
     # entrada = [2, 11, 37, 7, 16, 39, 9, 13, 7, 43, 13, 7, 44, 37, 7, 39, 7, 9, 14, 7, 30, 5, 9, 19, 4, 43, 7, 44, 9, 36, 14, 7, 30, 7, 9, 19, 36]
     entrada = [2, 11, 37, 14, 7, 30, 25,7,16,38, 16,19, 36]
     # [2, 11, 37, 16, 
     #            16, 
     #            14, 16,38, 
     #            16,19, 36]
+=======
+    entrada = [2, 11, 37, 7, 39, 3, 30, 10, 36]
+    
+>>>>>>> 737ad263ec5cc24b685ac218c6fb9fef080e8c8f
     analisador = AnalisadorSintatico()
     resul = analisador.analisar(entrada)
     # print(resul)

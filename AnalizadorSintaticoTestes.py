@@ -1,15 +1,15 @@
-sentenca = [3,2,3, 1]
+
 producoes = { 1: [2, 11, 37, 50, 51, 52, 36], 
     2: [7, 53, 39, 54, 38, 55], 
-    3: [16], 
-    4: [16], 
+    3: [ ], 
+    4: [ ], 
     5: [41, 7, 53],
     6: [13], 
     7: [18], 
     8: [3], 
     9: [24], 
     10: [57, 39, 54, 38, 55],
-    11: [16], 
+    11: [ ], 
     12: [7, 53], 
     13: [58, 7, 59, 37, 50,51, 52, 4, 44, 60, 43, 36, 51], 
     14: [13], 
@@ -17,29 +17,29 @@ producoes = { 1: [2, 11, 37, 50, 51, 52, 36],
     16: [24], 
     17: [18], 
     18: [3], 
-    19: [16], 
+    19: [ ], 
     20: [5],
     21: [6], 
     22: [7], 
     23: [8], 
-    24: [10], 
-    25: [16],
-    26: [16], 
+    24: [ ], 
+    25: [ ],
+    26: [ ], 
     27: [44, 61, 43], 
     28: [54, 7, 62], 
     29: [38, 54, 7, 62],
-    30: [16],
+    30: [ ],
     31: [14, 63, 38, 64,19], 
-    32: [16], 
+    32: [ ], 
     33: [63, 38, 64], 
     34: [7, 30, 65], 
     35: [10, 30, 65],
     36: [8, 30, 65], 
-    37: [16], 
+    37: [ ], 
     38: [25, 7, 66], 
-    39: [16],
+    39: [ ],
     40: [44, 67, 68, 43],
-    41: [16], 
+    41: [ ], 
     42: [44, 67, 68, 43], 
     43: [5], 
     44: [10], 
@@ -48,13 +48,12 @@ producoes = { 1: [2, 11, 37, 50, 51, 52, 36],
     47: [7], 
     48: [15, 44, 7, 69, 43, 37, 63, 38, 64, 36, 70] , 
     49: [20, 37, 63, 38, 64, 36], 
-    50: [16],
+    50: [ ],
     51: [1, 44, 7, 69, 43, 37, 63, 38, 64, 36], 
     52: [29, 71], 
     53: [46, 71], 
     54: [28, 71], 
     55: [27, 71],
-    56: [33, 71], 
     57: [31, 71], 
     58: [5], 
     59: [6], 
@@ -67,17 +66,15 @@ producoes = { 1: [2, 11, 37, 50, 51, 52, 36],
     66: [21, 37, 63, 38, 64, 36, 1, 44, 7, 69, 43], 
     67: [23, 26, 7], 
     68: [22, 32, 12, 73], 
-    69: [16], 
+    69: [ ], 
     70: [32, 7, 74, 73],
-    71: [16], 
+    71: [ ], 
     72: [41,7,74], 
     73: [77,78], 
     74: [25,7,66], 
-    75: [35,77,78],
-    76: [48,77,78], 
-    77: [16], 
+    77: [ ], 
     78: [79,80], 
-    79: [16], 
+    79: [ ], 
     80: [42,79,80],
     81: [40,79,80], 
     82: [5], 
@@ -89,9 +86,7 @@ producoes = { 1: [2, 11, 37, 50, 51, 52, 36],
 
 pilha=[]
 producaoInicial = 1
-inicioNaoTerminais = 6
-
-pilha = producoes.get(producaoInicial)
+inicioNaoTerminais = 49
 
 # Criação das tabelas  num de colunas     num de linhas
 tabela = [[0 for _ in range(49)] for _ in range(33)]
@@ -147,7 +142,7 @@ def completarMatriz():
     tabela[0][46]=46
     tabela[0][47]=47
     tabela[0][48]=48
-
+    
     # Linha dos não terminais
     tabela[1][0]=49
     tabela[2][0]=50
@@ -156,183 +151,233 @@ def completarMatriz():
     tabela[5][0]=53
     tabela[6][0]=54
     tabela[7][0]=55
-    tabela[8][0]=56
-    tabela[9][0]=57
-    tabela[10][0]=58
-    tabela[11][0]=59
-    tabela[12][0]=60
-    tabela[13][0]=61
-    tabela[14][0]=62
-    tabela[15][0]=63
-    tabela[16][0]=64
-    tabela[17][0]=65
-    tabela[18][0]=66
-    tabela[19][0]=67
-    tabela[20][0]=68
-    tabela[21][0]=69
-    tabela[22][0]=70
-    tabela[23][0]=71
-    tabela[24][0]=72
-    tabela[25][0]=73
-    tabela[26][0]=74
-    tabela[27][0]=75
-    tabela[28][0]=76
-    tabela[29][0]=77
-    tabela[30][0]=78
-    tabela[32][0]=79
-    tabela[32][0]=80
+    tabela[8][0]=57
+    tabela[9][0]=58
+    tabela[10][0]=59
+    tabela[11][0]=60
+    tabela[12][0]=61
+    tabela[13][0]=62
+    tabela[14][0]=63
+    tabela[15][0]=64
+    tabela[16][0]=65
+    tabela[17][0]=66
+    tabela[18][0]=67
+    tabela[19][0]=68
+    tabela[20][0]=69
+    tabela[21][0]=70
+    tabela[22][0]=71
+    tabela[23][0]=72
+    tabela[24][0]=73
+    tabela[25][0]=74
+    tabela[26][0]=77
+    tabela[27][0]=78
+    tabela[28][0]=79
+    tabela[29][0]=80
+    
     #  Número das produções
-    tabela[1][2]=1
-    tabela[2][2]=3
-    tabela[2][3]=3
+    
+    #bloco 49 
+    tabela[1][2]=1 
+    
+    #dclvar 50
+    tabela[2][2]=3 
+    tabela[2][7]=2
     tabela[2][13]=3
-    tabela[2][16]=3
     tabela[2][18]=3
+    tabela[2][3]=3
     tabela[2][24]=3
+    tabela[2][14]=3
+    
+    #dclfunc 51
     tabela[3][2]=13
-    tabela[3][3]=13
     tabela[3][13]=13
-    tabela[3][14]=19
-    # tabela[3][16]=19
     tabela[3][18]=13
+    tabela[3][3]=13
     tabela[3][24]=13
+    tabela[3][14]=19
+    
+    #corpo 52
     tabela[4][14]=31
-    tabela[5][2]=4
-    tabela[5][3]=4
-    tabela[5][13]=4
-    # tabela[5][16]=4
-    tabela[5][18]=4
-    tabela[5][24]=4
+    
+    #repident 53
     tabela[5][39]=4
     tabela[5][41]=5
-    tabela[6][3]=8
-    tabela[6][9]=9
-    tabela[6][13]=6
+    
+    #tipo 54
+    tabela[6][13]=6 
     tabela[6][18]=7
-    tabela[7][2]=11
-    tabela[7][3]=11
-    tabela[7][9]=10
+    tabela[6][3]=8
+    tabela[6][24]=9
+    
+    #ldvar 55
+    tabela[7][2]=11 
+    tabela[7][7]=10
     tabela[7][13]=11
-    tabela[7][16]=11
     tabela[7][18]=11
+    tabela[7][13]=11
     tabela[7][24]=11
-    tabela[9][7]=12
-    tabela[10][2]=15
-    tabela[10][3]=18
-    tabela[10][13]=14
-    tabela[10][18]=17
-    tabela[10][24]=16
-    # tabela[11][16]=26
-    tabela[11][37]=26
-    tabela[11][44]=27
-    tabela[12][5]=20
-    tabela[12][6]=21
-    tabela[12][7]=22
-    tabela[12][8]=23
-    tabela[12][10]=24
-    # tabela[12][16]=25
-    tabela[12][43]=25
-    tabela[13][13]=28
-    tabela[13][18]=28
-    tabela[13][24]=28
-    tabela[14][16]=30
-    tabela[14][38]=29
-    tabela[14][43]=30
-    tabela[15][1]=51
-    tabela[15][7]=34
-    tabela[15][8]=26
-    tabela[15][10]=35
-    tabela[15][15]=48
-    # tabela[15][16]=37
-    tabela[15][17]=63
-    tabela[15][21]=68
-    tabela[15][22]=68
-    tabela[15][23]=68
-    tabela[15][25]=39
-    tabela[15][38]=37
-    tabela[16][7]=33
-    tabela[16][8]=33
-    tabela[16][10]=33
-    # tabela[16][16]=32
-    tabela[16][19]=32
-    tabela[16][25]=33
-    tabela[16][36]=32
-    tabela[17][5]=73
-    tabela[17][6]=73
-    tabela[17][8]=73
-    tabela[17][9]=73
-    tabela[17][25]=74
-    tabela[17][44]=73
-    # tabela[18][16]=39
-    tabela[18][38]=39
-    tabela[18][43]=39
-    tabela[18][44]=40
-    tabela[19][5]=43
-    tabela[19][6]=45
-    tabela[19][7]=47
-    tabela[19][8]=46
-    tabela[19][10]=44
-    # tabela[20][16]=41
-    tabela[20][38]=41
-    tabela[20][43]=41
-    tabela[20][44]=42
-    tabela[21][27]=55
-    tabela[21][28]=54
-    tabela[21][29]=52
-    tabela[21][31]=57
-    tabela[21][33]=56
-    tabela[21][46]=53
-    # tabela[22][16]=50
-    tabela[22][20]=49
-    tabela[22][38]=50
-    tabela[23][5]=58
-    tabela[23][6]=59
-    tabela[23][8]=61
-    tabela[23][9]=62
-    tabela[23][10]=60
-    tabela[24][34]=64
-    tabela[24][47]=65
-    # tabela[25][16]=69
-    tabela[25][32]=70
-    tabela[25][38]=69
-    # tabela[26][16]=71
-    tabela[26][38]=71
-    tabela[26][41]=72
-    tabela[29][5]=78
-    tabela[29][6]=78
-    tabela[29][8]=78
-    tabela[29][9]=78
-    tabela[29][10]=78
-    # tabela[30][16]=77
-    tabela[30][35]=75
-    tabela[30][38]=77
-    tabela[30][43]=77
-    tabela[30][44]=78
-    tabela[30][48]=76
-    tabela[31][5]=82
-    tabela[31][6]=83
-    tabela[31][7]=84
-    tabela[31][8]=86
-    tabela[31][10]=85
-    tabela[31][44]=87
-    # tabela[32][16]=79
-    tabela[32][35]=79
-    tabela[32][40]=81
-    tabela[32][42]=80
-    tabela[32][48]=79
-   
+    tabela[7][14]=11
+    
+    #lid 57
+    tabela[8][7]=12 
+
+    #tipo_retorno 58
+    tabela[9][2]=15
+    tabela[9][13]=14
+    tabela[9][18]=17
+    tabela[9][3]=18
+    tabela[9][24]=16
+    
+    #defpar 59
+    tabela[10][37]=26
+    tabela[10][44]=27
+    
+    #valor_retorno 60
+    tabela[11][7]=22
+    tabela[11][43]=25
+    tabela[11][5]=20
+    tabela[11][6]=21
+    tabela[11][8]=23
+    tabela[11][10]=24
+    
+    #param 61
+    tabela[12][13]=28
+    tabela[12][18]=28
+    tabela[12][3]=28
+    tabela[12][24]=28
+    
+    #lparam 62
+    tabela[13][38]=29
+    tabela[13][14]=30
+    
+    #comando 63
+    tabela[14][7]=34
+    tabela[14][38]=37
+    tabela[14][8]=36
+    tabela[14][10]=35
+    tabela[14][25]=38
+    tabela[14][15]=48
+    tabela[14][1]=51
+    tabela[14][17]=63
+    tabela[14][21]=66
+    tabela[14][23]=67
+    tabela[14][22]=68
+    
+    #repcomando 64
+    tabela[15][36]=32
+    tabela[15][7]=33
+    tabela[15][38]=33
+    tabela[15][8]=33
+    tabela[15][10]=33
+    tabela[15][19]=32
+    tabela[15][25]=33
+    tabela[15][15]=33
+    tabela[15][1]=33
+    tabela[15][17]=33
+    tabela[15][21]=33
+    tabela[15][23]=33
+    tabela[15][22]=33
+    
+    #expressao 65
+    tabela[16][7]=73
+    tabela[16][44]=73
+    tabela[16][5]=73
+    tabela[16][6]=73
+    tabela[16][8]=73
+    tabela[16][10]=73
+    tabela[16][25]=74
+    
+    #parametros 66
+    tabela[17][38]=39
+    tabela[17][44]=40
+    tabela[17][43]=39
+
+    #tparam 67
+    tabela[18][7]=47
+    tabela[18][5]=43
+    tabela[18][6]=45
+    tabela[18][8]=46
+    tabela[18][10]=44
+    
+    #reppar 68
+    tabela[19][41]=42
+    tabela[19][43]=41
+    
+    #comparacao 69
+    tabela[20][29]=52
+    tabela[20][46]=53
+    tabela[20][28]=54
+    tabela[20][27]=55
+    tabela[20][33]=56
+    tabela[20][31]=57
+    
+    #elseparte 70
+    tabela[21][38]=50
+    tabela[21][20]=49
+
+    #contcomparcao 71
+    tabela[22][7]=62
+    tabela[22][5]=58
+    tabela[22][6]=59
+    tabela[22][8]=61
+    tabela[22][10]=60
+    
+    #incremento 72
+    tabela[23][34]=64
+    tabela[23][47]=65
+    
+    #seqcount 73
+    tabela[24][38]=69
+    tabela[24][32]=70
+    
+    #sequencia 74
+    tabela[25][38]=71
+    tabela[25][41]=72
+    tabela[25][32]=71
+    
+    #termo 77
+    tabela[26][7]=78
+    tabela[26][44]=78
+    tabela[26][5]=78
+    tabela[26][6]=78
+    tabela[26][8]=78
+    tabela[26][10]=78
+    
+    #repexp 78
+    tabela[27][38]=77
+    tabela[27][43]=77
+    tabela[27][35]=75
+    tabela[27][48]=76
+    
+    #fator 79
+    tabela[28][7]=84
+    tabela[28][44]=87
+    tabela[28][5]=82
+    tabela[28][6]=83
+    tabela[28][8]=86
+    tabela[28][10]=85
+    
+    #reptermo 80
+    tabela[29][38]=79
+    tabela[29][43]=79
+    tabela[29][35]=79
+    tabela[29][48]=79
+    tabela[29][42]=80
+    tabela[29][40]=81
+
 completarMatriz()
+
+
+pilha = producoes.get(producaoInicial) + ["$"]
+sentenca = [2, 11, 37, 7, 39, 3, 38, 14, 19, 36]
 
 def acharNumProducao(naoTerminal, terminal):
     numeroProducao=tabela[naoTerminal][terminal]
-    # print(naoTerminal, terminal)
-    # print(numeroProducao)
     return numeroProducao
 
-pilhaAnterior=[]
-umaVez=False
-
-while True:
+    
+while pilha[0] != "$":
+    
     print(f"pilha:{pilha} \nsentenca: {sentenca}\n")
     
     if pilha[0] >= inicioNaoTerminais:
@@ -347,7 +392,7 @@ while True:
                 linhaNaoTerminal = i
             i += 1
         
-        # print(linhaNaoTerminal, colunaTerminal)
+        print(acharNumProducao(linhaNaoTerminal, colunaTerminal), "\n")
         numeroProducao = acharNumProducao(linhaNaoTerminal, colunaTerminal)
         adicionarAPilha = producoes.get(numeroProducao) 
         pilha.pop(0)
@@ -356,45 +401,10 @@ while True:
     elif pilha[0] == sentenca[0]:
         pilha.pop(0)
         sentenca.pop(0)
-    
-    if umaVez:
+    else:
         break
-    if pilha == pilhaAnterior:
-        umaVez = True
-    if not sentenca:
-        break
-    pilhaAnterior=pilha
 
-
-
-#  testes:
-# if __name__ == "__main__":
-#     analizadorSintatico()
-    
-
-    # print(pilha)
-    # if pilha[0] == sentenca[0]:
-    #     pilha.pop(0)
-    #     sentenca.pop(0)
-    # print(pilha)
-    # if pilha[0] >= inicioNaoTerminais:
-    #     linhaNaoTerminal=0;
-    #     linhaTerminal=0;
-    #     i=0;
-        
-    #     for linha in tabela:
-    #         if i == 0:
-    #             linhaTerminal = linha.index(3)
-    #         if linha[0] == pilha[0]:
-    #             linhaNaoTerminal = i;
-    #         i += 1;
-            
-    #     print(linhaNaoTerminal, linhaTerminal)
-    #     numeroProducao = acharNumProducao(linhaNaoTerminal, linhaTerminal)
-    #     print(numeroProducao)
-    #     adicionarAPilha = producoes.get(numeroProducao) 
-    #     pilha.pop(0)
-    #     pilha = adicionarAPilha + pilha
-
-
-print(f"pilha:{pilha} \nsentenca: {sentenca} \n")
+if pilha[0] == "$" and sentenca[0] == "$":
+    print("Sintaxe correta")
+else:
+    print("Erro sintático")
