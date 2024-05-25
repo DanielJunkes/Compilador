@@ -132,14 +132,14 @@ def analisar():
                     lexema = lexema + codigo[j]
                     continue
             #verifica se é um dos possiveis atribuidores ou parenteses 
-            elif codigo[j] in atribuidores_parentizacao:
+            if codigo[j] in atribuidores_parentizacao:
                 lexema = lexema + codigo[j]
                 if j+1 < len(codigo):
                     #verifica se juntando o prox caracter com o atual forma um atribuidor duplo
                     if lexema + codigo[j+1] in atribuidores_duplos:
                         continue
                     #verificacao para definir o simbolo - como subtracao ou numero negativo
-                    if tokens != [] and codigo[j] == '-':
+                    elif tokens != [] and codigo[j] == '-':
                         if tokens[-1] == 5 or tokens[-1] == 6:
                             pass
                         elif codigo[j+1].isnumeric():
@@ -180,6 +180,7 @@ def analisar():
             
             #verifica se o lexema esta dentro do dicionario de atribuidores simples
             elif lexema in atribuidores_parentizacao:
+                print(f"entro: {lexema}")
                 token = atribuidores_parentizacao.get(lexema)
                 tokens.append(token)
                 escrever_textbox(token=token, codigo=lexema, linha=i)
