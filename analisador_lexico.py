@@ -142,7 +142,7 @@ def analisar():
                     if tokens != [] and codigo[j] == '-':
                         if tokens[-1] == 5 or tokens[-1] == 6:
                             pass
-                        else:
+                        elif codigo[j+1].isnumeric():
                             continue
                     elif tokens == [] and codigo[j] == '-':
                         continue

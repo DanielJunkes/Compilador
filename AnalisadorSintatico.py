@@ -394,6 +394,8 @@ class AnalisadorSintatico:
                 
                 print(f"Producao: {self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)}\n")
                 numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
+                if numeroProducao == 0:
+                    return pilha
                 adicionarAPilha = self.producoes.get(numeroProducao) 
                 pilha.pop(0)
                 pilha = adicionarAPilha + pilha
