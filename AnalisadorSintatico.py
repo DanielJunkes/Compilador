@@ -409,10 +409,3 @@ class AnalisadorSintatico:
                 
     
     
-
-
-
-
-
-
-
