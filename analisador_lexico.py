@@ -39,14 +39,14 @@ def verificar_numeros(lexema, i, j):
             escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido')
         else:
             token = valores_dos_dados.get('numerofloat')
-            tokens.append(token)
+            tokens.append([token, i, j-len(lexema)+1])
             escrever_textbox(token=token, codigo=lexema, linha=i)
     else:
         if len(lexema) > 5:
             escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido')
         else:
             token = valores_dos_dados.get('numerointeiro')
-            tokens.append(token)
+            tokens.append([token, i, j-len(lexema)+1])
             escrever_textbox(token=token, codigo=lexema, linha=i)
 
 def verificar_variavel(lexema, i, j):
@@ -59,7 +59,7 @@ def verificar_variavel(lexema, i, j):
             escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter caracteres especiais')
         else:
             token = valores_dos_dados.get('nomevariavel')
-            tokens.append(token)
+            tokens.append([token, i, j-len(lexema)+1])
             escrever_textbox(token=token, codigo=lexema, linha=i)
             
 
@@ -121,7 +121,7 @@ def analisar():
                                 lexema = ''
                         if lexema != '':
                                 token = textos.get(codigo[j])
-                                tokens.append(token)
+                                tokens.append([token, i, j-len(lexema)+1])
                                 escrever_textbox(token=token, codigo=lexema, linha=i)
                                 lexema = ''
                     else:
@@ -174,14 +174,14 @@ def analisar():
             #verifica se o lexema esta dentro do dicionario de atribuidores duplos    
             if lexema in atribuidores_duplos:
                 token = atribuidores_duplos.get(lexema)
-                tokens.append(token)
+                tokens.append([token, i, j-len(lexema)+1])
                 escrever_textbox(token=token, codigo=lexema, linha=i)
                 lexema = ''
             
             #verifica se o lexema esta dentro do dicionario de atribuidores simples
             elif lexema in atribuidores_parentizacao:
                 token = atribuidores_parentizacao.get(lexema)
-                tokens.append(token)
+                tokens.append([token, i, j-len(lexema)+1])
                 escrever_textbox(token=token, codigo=lexema, linha=i)
                 lexema = ''
                 
@@ -190,13 +190,13 @@ def analisar():
                 token = palavras_reservadas.get(lexema)
                 if j+1 < len(codigo):
                     if codigo[j+1] in atribuidores_parentizacao or codigo[j+1] == ' ':
-                        tokens.append(token)
+                        tokens.append([token, i, j-len(lexema)+1])
                         escrever_textbox(token=token, codigo=lexema, linha=i)
                         lexema = ''
                     else:
                         continue
                 else:
-                    tokens.append(token)
+                    tokens.append([token, i, j-len(lexema)+1])
                     escrever_textbox(token=token, codigo=lexema, linha=i)
                     lexema = ''
                     
@@ -215,11 +215,7 @@ def analisar():
         escrever_textbox(f'Erro - Um comentario de bloco foi iniciado mas não finalizado')
         
     analisadorSintatico = AnalisadorSintatico()
-    resultAnalise = analisadorSintatico.analisar(entrada=tokens)
-    if resultAnalise[0] == "$":
-        print("Sintaxe correta")
-    else:
-        print("Erro sintático")
+    analisadorSintatico.analisar(entrada=tokens, text_box=textBoxSintatico)
     
     
 def importar_arquivo():
@@ -238,26 +234,29 @@ app = ctk.CTk()
 
 app.title("Analisador Léxico")
 app.geometry("1280x650")
-app.grid_columnconfigure((0,1,2,3), weight=1)
-app.grid_rowconfigure((0,1,2,3), weight=1)
-app.resizable(False, False)
+app.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
+app.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
 
 #area para escrever
 label = ctk.CTkLabel(app, text="Código:")
 label.grid(row=0, column=0, padx=10)
 textBox = ctk.CTkTextbox(app)
-textBox.grid(row=0, column=0, rowspan=3, columnspan=4, sticky="nsew", padx=(10, 320), pady=10)
+textBox.grid(row=0, column=0, rowspan=4, columnspan=4, sticky="nsew", padx=(10, 10), pady=10)
 
 #area para mostrar analise lexica
 textBoxResult = ctk.CTkTextbox(app, state="disabled")
-textBoxResult.grid(row=0, column=2, rowspan=3, columnspan=2, sticky="nsew", padx=(810, 10), pady=10)
+textBoxResult.grid(row=0, column=4, rowspan=2, sticky="nsew", padx=(0, 10), pady=(10, 0))
+
+#area para mostrar analise sintatica
+textBoxSintatico = ctk.CTkTextbox(app, state="disabled")
+textBoxSintatico.grid(row=2, column=4, rowspan=2, sticky="nsew", padx=(0, 10), pady=10)
 
 #botao d analisar
 btnAnalisar = ctk.CTkButton(app, text="Analisar", command=analisar)
-btnAnalisar.grid(row=3, column=0, columnspan=3, sticky="nsew", padx=10, pady=10)
+btnAnalisar.grid(row=4, column=0, columnspan=3, sticky="nsew", padx=10, pady=10)
 
 #botao para importar arquivo
 btnImportar = ctk.CTkButton(app, text="Importar Arquivo", command=importar_arquivo)
-btnImportar.grid(row=3, column=3, columnspan=2, sticky="nsew", padx=10, pady=10)
+btnImportar.grid(row=4, column=3, columnspan=3, sticky="nsew", padx=10, pady=10)
 
 app.mainloop()

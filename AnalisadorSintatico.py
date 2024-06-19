@@ -41,7 +41,7 @@ class AnalisadorSintatico:
         39: [ ],
         40: [44, 67, 68, 43],
         41: [ ], 
-        42: [44, 67, 68, 43], 
+        42: [41, 67, 68], 
         43: [5], 
         44: [10], 
         45: [6],
@@ -374,38 +374,58 @@ class AnalisadorSintatico:
         numeroProducao=self.tabela[naoTerminal][terminal]
         return numeroProducao
 
-    def analisar(self, entrada):
+    def analisar(self, entrada, text_box):
+        
+        text_box.configure(state="normal")
+        text_box.delete('1.0', 'end')
+        text_box.configure(state="disabled")
+        
         pilha = self.producoes.get(self.producaoInicial) + ["$"]
+        
         while pilha[0] != "$":
-    
-            print(f"pilha:{pilha} \nsentenca: {entrada}\n")
             
+            tokens = []
+            for i in range(len(entrada)):
+                tokens.append(entrada[i][0])
+    
+            text_box.configure(state="normal")
+            text_box.insert("end", f"pilha:{pilha} \nsentenca: {tokens}\n\n")
+            text_box.configure(state="disabled")
+                        
             if pilha[0] >= self.inicioNaoTerminais:
+                
                 linhaNaoTerminal=0
                 colunaTerminal=0
                 i=0
                 
                 for linha in self.tabela:
                     if i == 0:
-                        colunaTerminal = linha.index(entrada[0])
+                        colunaTerminal = linha.index(entrada[0][0])
                     if linha[0] == pilha[0]:
                         linhaNaoTerminal = i
                     i += 1
                 
-                print(f"Producao: {self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)}\n")
                 numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
                 if numeroProducao == 0:
-                    return pilha
+                    text_box.configure(state="normal")
+                    text_box.insert("end", f"Erro lexico - Linha {entrada[0][1]} - Posição {entrada[0][2]}\n")
+                    text_box.configure(state="disabled")
+                    return 0
                 adicionarAPilha = self.producoes.get(numeroProducao) 
                 pilha.pop(0)
                 pilha = adicionarAPilha + pilha
                 
-            elif pilha[0] == entrada[0]:
+            elif pilha[0] == entrada[0][0]:
                 pilha.pop(0)
                 entrada.pop(0)
             else:
-                break
-        return pilha
-                
+                text_box.configure(state="normal")
+                text_box.insert("end", f"Erro lexico - Linha {entrada[0][1]} - Posição {entrada[0][2]}\n")
+                text_box.configure(state="disabled")
+                return 0
+        
+        text_box.configure(state="normal")
+        text_box.insert("end", f"pilha:{pilha} \nsentenca: []\n")
+        text_box.configure(state="disabled")
     
     
