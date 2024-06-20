@@ -425,7 +425,7 @@ class AnalisadorSintatico:
                 return 0
         
         text_box.configure(state="normal")
-        text_box.insert("end", f"pilha:{pilha} \nsentenca: []\n")
+        text_box.insert("end", f"pilha:{pilha} \nsentenca: {entrada}\n")
         text_box.configure(state="disabled")
     
     

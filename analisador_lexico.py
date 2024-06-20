@@ -228,6 +228,7 @@ def importar_arquivo():
     #coloca o texto no textBox
     textBox.delete('1.0', 'end')
     textBox.insert('end', conteudo)
+    
 
 #interface grafica
 app = ctk.CTk()
@@ -242,6 +243,7 @@ label = ctk.CTkLabel(app, text="Código:")
 label.grid(row=0, column=0, padx=10)
 textBox = ctk.CTkTextbox(app)
 textBox.grid(row=0, column=0, rowspan=4, columnspan=4, sticky="nsew", padx=(10, 10), pady=10)
+
 
 #area para mostrar analise lexica
 textBoxResult = ctk.CTkTextbox(app, state="disabled")
