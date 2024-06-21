@@ -90,6 +90,25 @@ class AnalisadorSintatico:
     
     producaoInicial = 1
     inicioNaoTerminais = 49
+    
+    palavras_reservadas = {1: 'while', 2: 'void', 3: 'string', 4: 'return', 11: 'main', 12: 'literal', 13: 'integer', 14: 'inicio', 15: 'if', 
+                           17: 'for', 18: 'float', 19: 'fim', 20: 'else', 21: 'do', 22: 'cout', 23: 'cin', 24: 'char', 
+                           25: 'callfuncao'}
+    
+    atribuidores_parentizacao = {28: '>', 30: '=', 33: '<', 35: '+', 36: '}', 37: '{', 38: ';', 39: ':', 
+                                 40: '/', 41: ',', 42: '*', 43: ')', 44: '(', 45: '$', 48: '-'}
+    
+    atribuidores_duplos = {26: '>>', 27: '>=', 29: '==', 31: '<=', 32: '<<', 34: '++', 46: '!=', 47: '--'}
+    
+    valores_dos_dados = {5: 'numerointeiro', 6: 'numerofloat', 7: 'nomevariavel', 8: 'nomedochar', 10: 'nomedastring'}
+    
+    textos = {10: '"', 8: "'", 12: '|'}
+    
+    nao_terminais = {49: "Bloco", 50: "Declaração de variavel", 51: "Declaração de função", 52: "Corpo", 53: "Repident",
+                     54: "Tipo", 57: "Nome da variavel", 58: "Tipo do retorno", 59: "Definição de parâmetro", 60: "Valor do retorno", 
+                     61: "Definição de parâmetro", 62: "Outra definição de Parâmetro", 63: "Comando", 64: "Outro comando", 65: "Expressão",
+                     66: "Parâmetro", 67: "Tipo do parâmetro", 68: "Outro parâmetro", 69: "Primeiro valor da comparação", 70: "Else", 71: "Segundo valor da comparação",
+                     72: "Incremento", 73: "Variavel", 74: "Sequencia", 77: "Termo", 78: "+ ou -", 79: "Fator", 80: "Outro termo"}
 
     # Criação das tabelas  num de colunas     num de linhas
     tabela = [[0 for _ in range(49)] for _ in range(33)]
@@ -319,7 +338,7 @@ class AnalisadorSintatico:
         self.tabela[21][38]=50
         self.tabela[21][20]=49
 
-        #contcomparcao 71
+        #contcomparacao 71
         self.tabela[22][7]=62
         self.tabela[22][5]=58
         self.tabela[22][6]=59
@@ -373,6 +392,27 @@ class AnalisadorSintatico:
     def __acharNumProducao(self, naoTerminal, terminal):
         numeroProducao=self.tabela[naoTerminal][terminal]
         return numeroProducao
+    
+    def __get_palavra(self, token):
+        
+        if token in self.palavras_reservadas:
+            palavra = self.palavras_reservadas.get(token)
+            return palavra
+        if token in self.atribuidores_parentizacao:
+            palavra = self.atribuidores_parentizacao.get(token)
+            return palavra
+        if token in self.atribuidores_duplos:
+            palavra = self.atribuidores_duplos.get(token)
+            return palavra
+        if token in self.valores_dos_dados:
+            palavra = self.valores_dos_dados.get(token)
+            return palavra
+        if token in self.textos:
+            palavra = self.textos.get(token)
+            return palavra
+        if token in self.nao_terminais:
+            palavra = self.nao_terminais.get(token)
+            return palavra
 
     def analisar(self, entrada, text_box):
         
@@ -381,13 +421,17 @@ class AnalisadorSintatico:
         text_box.configure(state="disabled")
         
         pilha = self.producoes.get(self.producaoInicial) + ["$"]
+        linhaToken = entrada[0][1]
         
         while pilha[0] != "$":
             
             tokens = []
             for i in range(len(entrada)):
                 tokens.append(entrada[i][0])
-    
+                
+            if len(entrada) > 0:
+                linhaToken = entrada[0][1]
+                
             text_box.configure(state="normal")
             text_box.insert("end", f"pilha:{pilha} \nsentenca: {tokens}\n\n")
             text_box.configure(state="disabled")
@@ -399,18 +443,26 @@ class AnalisadorSintatico:
                 i=0
                 
                 for linha in self.tabela:
-                    if i == 0:
-                        colunaTerminal = linha.index(entrada[0][0])
-                    if linha[0] == pilha[0]:
-                        linhaNaoTerminal = i
-                    i += 1
+                    if len(entrada) > 0:
+                        if i == 0:
+                            colunaTerminal = linha.index(entrada[0][0])
+                        if linha[0] == pilha[0]:
+                            linhaNaoTerminal = i
+                        i += 1
                 
                 numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
                 if numeroProducao == 0:
+                    
+                    palavra_esperada = self.__get_palavra(pilha[0])
+                    palavra_recebida = ""
+                    if len(entrada) > 0:
+                        palavra_recebida = self.__get_palavra(entrada[0][0])
+                    
                     text_box.configure(state="normal")
-                    text_box.insert("end", f"Erro lexico - Linha {entrada[0][1]} - Posição {entrada[0][2]}\n")
+                    text_box.insert("end", f'Erro lexico - Comando esperado: "{palavra_esperada}", recebido: "{palavra_recebida}" - Linha {linhaToken}\n')
                     text_box.configure(state="disabled")
                     return 0
+                
                 adicionarAPilha = self.producoes.get(numeroProducao) 
                 pilha.pop(0)
                 pilha = adicionarAPilha + pilha
@@ -419,13 +471,18 @@ class AnalisadorSintatico:
                 pilha.pop(0)
                 entrada.pop(0)
             else:
+                palavra_esperada = self.__get_palavra(pilha[0])
+                palavra_recebida = ""
+                if len(entrada) > 0:
+                    palavra_recebida = self.__get_palavra(entrada[0][0])
+                    
                 text_box.configure(state="normal")
-                text_box.insert("end", f"Erro lexico - Linha {entrada[0][1]} - Posição {entrada[0][2]}\n")
+                text_box.insert("end", f'Erro lexico - Esperado: "{palavra_esperada}", recebido: "{palavra_recebida}" - Linha {linhaToken}\n')
                 text_box.configure(state="disabled")
                 return 0
         
         text_box.configure(state="normal")
-        text_box.insert("end", f"pilha:{pilha} \nsentenca: []\n")
+        text_box.insert("end", f"pilha:{pilha} \nsentenca: {entrada}\n")
         text_box.configure(state="disabled")
     
     

@@ -41,14 +41,14 @@ class AnalisadorLexico:
                 self.__escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido', textBoxResult=textBoxResult)
             else:
                 token = self.valores_dos_dados.get('numerofloat')
-                self.tokens.append([token, i, j-len(lexema)+1])
+                self.tokens.append([token, i])
                 self.__escrever_textbox(token=token, codigo=lexema, linha=i, textBoxResult=textBoxResult)
         else:
             if len(lexema) > 5:
                 self.__escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido', textBoxResult=textBoxResult)
             else:
                 token = self.valores_dos_dados.get('numerointeiro')
-                self.tokens.append([token, i, j-len(lexema)+1])
+                self.tokens.append([token, i])
                 self.__escrever_textbox(token=token, codigo=lexema, linha=i, textBoxResult=textBoxResult)
 
     def __verificar_variavel(self, lexema, i, j, textBoxResult):
@@ -61,7 +61,7 @@ class AnalisadorLexico:
                 self.__escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter caracteres especiais', textBoxResult=textBoxResult)
             else:
                 token = self.valores_dos_dados.get('nomevariavel')
-                self.tokens.append([token, i, j-len(lexema)+1])
+                self.tokens.append([token, i])
                 self.__escrever_textbox(token=token, codigo=lexema, linha=i, textBoxResult=textBoxResult)
                 
 
@@ -123,7 +123,7 @@ class AnalisadorLexico:
                                     lexema = ''
                             if lexema != '':
                                     token = self.textos.get(codigo[j])
-                                    self.tokens.append([token, i, j-len(lexema)+1])
+                                    self.tokens.append([token, i])
                                     self.__escrever_textbox(token=token, codigo=lexema, linha=i, textBoxResult=textBoxResult)
                                     lexema = ''
                         else:
@@ -176,14 +176,14 @@ class AnalisadorLexico:
                 #verifica se o lexema esta dentro do dicionario de atribuidores duplos    
                 if lexema in self.atribuidores_duplos:
                     token = self.atribuidores_duplos.get(lexema)
-                    self.tokens.append([token, i, j-len(lexema)+1])
+                    self.tokens.append([token, i])
                     self.__escrever_textbox(token=token, codigo=lexema, linha=i, textBoxResult=textBoxResult)
                     lexema = ''
                 
                 #verifica se o lexema esta dentro do dicionario de atribuidores simples
                 elif lexema in self.atribuidores_parentizacao:
                     token = self.atribuidores_parentizacao.get(lexema)
-                    self.tokens.append([token, i, j-len(lexema)+1])
+                    self.tokens.append([token, i])
                     self.__escrever_textbox(token=token, codigo=lexema, linha=i, textBoxResult=textBoxResult)
                     lexema = ''
                     
@@ -192,13 +192,13 @@ class AnalisadorLexico:
                     token = self.palavras_reservadas.get(lexema)
                     if j+1 < len(codigo):
                         if codigo[j+1] in self.atribuidores_parentizacao or codigo[j+1] == ' ':
-                            self.tokens.append([token, i, j-len(lexema)+1])
+                            self.tokens.append([token, i])
                             self.__escrever_textbox(token=token, codigo=lexema, linha=i, textBoxResult=textBoxResult)
                             lexema = ''
                         else:
                             continue
                     else:
-                        self.tokens.append([token, i, j-len(lexema)+1])
+                        self.tokens.append([token, i])
                         self.__escrever_textbox(token=token, codigo=lexema, linha=i, textBoxResult=textBoxResult)
                         lexema = ''
                         
