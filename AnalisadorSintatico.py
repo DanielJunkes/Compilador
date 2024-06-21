@@ -425,11 +425,7 @@ class AnalisadorSintatico:
                 return 0
         
         text_box.configure(state="normal")
-<<<<<<< HEAD
         text_box.insert("end", f"pilha:{pilha} \nsentenca: []\n")
-=======
-        text_box.insert("end", f"pilha:{pilha} \nsentenca: {entrada}\n")
->>>>>>> 67db437f0d3ea75fbff87bc2fe9a0d6e1912624f
         text_box.configure(state="disabled")
     
     
