@@ -1,10 +1,17 @@
 void main{
-\\testando o analisador
-nome: string = "daniel junkes mafioleti"
-caracter: char = 'aaa'
-cout<<|hello world|
-\* arrumar essa parte 
-if else
-callfunc
-while*\
+    numUm: integer;
+    numDOis: integer;
+
+    integer funcao (integer numum; integer numdois){
+        
+    inicio
+    result= numum * numdois;
+    fim
+    return(result)}
+
+    inicio
+
+    result = callfuncao funcao(numum,numdois);
+    cout<<|Resultado:|<<result;
+    fim
 }

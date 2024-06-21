@@ -1,11 +1,22 @@
-nome = "algum nome"
-nome2 = "outro nome"
-seraQueVaiFuncionarBem: 's'
-nome@ = "nome"
-cout<<|aaaaaa
-if(){
-idade = *\ 13
-}
-else{
-}
 
+void main{
+    nome:string;
+    anoNasc: integer;
+    idade: integer;
+
+    integer funcao (integer anoNasc){
+        idade: integer;
+        anoAtual: integer;
+        inicio
+        idade = anoAtual + anoNasc;
+        fim
+        return (idade)}
+
+    inicio
+    
+    idade = callfuncao funcao(anoNasc);
+    cout<<|Nome:|<<nome;
+    cout<<|Idade:|<<idade;
+
+    fim
+}

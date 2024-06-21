@@ -2,15 +2,15 @@ class AnalisadorSintatico:
     
     producoes = { 1: [2, 11, 37, 50, 51, 52, 36], 
         2: [7, 53, 39, 54, 38, 55], 
-        3: [16], 
-        4: [16], 
+        3: [ ], 
+        4: [ ], 
         5: [41, 7, 53],
         6: [13], 
         7: [18], 
         8: [3], 
         9: [24], 
         10: [57, 39, 54, 38, 55],
-        11: [16], 
+        11: [ ], 
         12: [7, 53], 
         13: [58, 7, 59, 37, 50,51, 52, 4, 44, 60, 43, 36, 51], 
         14: [13], 
@@ -18,30 +18,30 @@ class AnalisadorSintatico:
         16: [24], 
         17: [18], 
         18: [3], 
-        19: [16], 
+        19: [ ], 
         20: [5],
         21: [6], 
         22: [7], 
         23: [8], 
         24: [10], 
-        25: [16],
-        26: [16], 
+        25: [ ],
+        26: [ ], 
         27: [44, 61, 43], 
         28: [54, 7, 62], 
         29: [38, 54, 7, 62],
-        30: [16],
+        30: [ ],
         31: [14, 63, 38, 64,19], 
-        32: [16], 
+        32: [ ], 
         33: [63, 38, 64], 
         34: [7, 30, 65], 
         35: [10, 30, 65],
         36: [8, 30, 65], 
-        37: [16], 
+        37: [ ], 
         38: [25, 7, 66], 
-        39: [16],
+        39: [ ],
         40: [44, 67, 68, 43],
-        41: [16], 
-        42: [44, 67, 68, 43], 
+        41: [ ], 
+        42: [41, 67, 68], 
         43: [5], 
         44: [10], 
         45: [6],
@@ -49,12 +49,13 @@ class AnalisadorSintatico:
         47: [7], 
         48: [15, 44, 7, 69, 43, 37, 63, 38, 64, 36, 70] , 
         49: [20, 37, 63, 38, 64, 36], 
-        50: [16],
+        50: [ ],
         51: [1, 44, 7, 69, 43, 37, 63, 38, 64, 36], 
         52: [29, 71], 
         53: [46, 71], 
         54: [28, 71], 
         55: [27, 71],
+        56: [33, 71], 
         57: [31, 71], 
         58: [5], 
         59: [6], 
@@ -67,15 +68,17 @@ class AnalisadorSintatico:
         66: [21, 37, 63, 38, 64, 36, 1, 44, 7, 69, 43], 
         67: [23, 26, 7], 
         68: [22, 32, 12, 73], 
-        69: [16], 
+        69: [ ], 
         70: [32, 7, 74, 73],
-        71: [16], 
+        71: [ ], 
         72: [41,7,74], 
         73: [77,78], 
         74: [25,7,66], 
-        77: [16], 
+        75: [35,77,78],
+        76: [48,77,78],
+        77: [ ], 
         78: [79,80], 
-        79: [16], 
+        79: [ ], 
         80: [42,79,80],
         81: [40,79,80], 
         82: [5], 
@@ -85,14 +88,9 @@ class AnalisadorSintatico:
         86: [8], 
         87: [44, 65, 43]}
     
-    pilha=[]
     producaoInicial = 1
     inicioNaoTerminais = 49
-    
-    pilhaAnterior=[]
-    umaVez=False
-    duasVezes=False
-    
+
     # Criação das tabelas  num de colunas     num de linhas
     tabela = [[0 for _ in range(49)] for _ in range(33)]
     
@@ -254,7 +252,7 @@ class AnalisadorSintatico:
         
         #lparam 62
         self.tabela[13][38]=29
-        self.tabela[13][14]=30
+        self.tabela[13][43]=30
         
         #comando 63
         self.tabela[14][7]=34
@@ -376,50 +374,58 @@ class AnalisadorSintatico:
         numeroProducao=self.tabela[naoTerminal][terminal]
         return numeroProducao
 
-    def analisar(self, entrada):
+    def analisar(self, entrada, text_box):
+        
+        text_box.configure(state="normal")
+        text_box.delete('1.0', 'end')
+        text_box.configure(state="disabled")
         
         pilha = self.producoes.get(self.producaoInicial) + ["$"]
-    
+        
         while pilha[0] != "$":
             
-            print(f"pilha:{pilha} \nsentenca: {entrada}\n")
-            
+            tokens = []
+            for i in range(len(entrada)):
+                tokens.append(entrada[i][0])
+    
+            text_box.configure(state="normal")
+            text_box.insert("end", f"pilha:{pilha} \nsentenca: {tokens}\n\n")
+            text_box.configure(state="disabled")
+                        
             if pilha[0] >= self.inicioNaoTerminais:
+                
                 linhaNaoTerminal=0
                 colunaTerminal=0
                 i=0
                 
                 for linha in self.tabela:
                     if i == 0:
-                        colunaTerminal = linha.index(entrada[0])
+                        colunaTerminal = linha.index(entrada[0][0])
                     if linha[0] == pilha[0]:
                         linhaNaoTerminal = i
                     i += 1
                 
-                print(self.__acharNumProducao(linhaNaoTerminal, colunaTerminal), "\n")
                 numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
+                if numeroProducao == 0:
+                    text_box.configure(state="normal")
+                    text_box.insert("end", f"Erro lexico - Linha {entrada[0][1]} - Posição {entrada[0][2]}\n")
+                    text_box.configure(state="disabled")
+                    return 0
                 adicionarAPilha = self.producoes.get(numeroProducao) 
                 pilha.pop(0)
                 pilha = adicionarAPilha + pilha
                 
-            elif pilha[0] == entrada[0]:
+            elif pilha[0] == entrada[0][0]:
                 pilha.pop(0)
                 entrada.pop(0)
-            
-            if not entrada:
-                break
-            
-if __name__ == "__main__":
-    entrada = [2, 11, 37, 7, 39, 3, 30, 10, 36]
+            else:
+                text_box.configure(state="normal")
+                text_box.insert("end", f"Erro lexico - Linha {entrada[0][1]} - Posição {entrada[0][2]}\n")
+                text_box.configure(state="disabled")
+                return 0
+        
+        text_box.configure(state="normal")
+        text_box.insert("end", f"pilha:{pilha} \nsentenca: []\n")
+        text_box.configure(state="disabled")
     
-    analisador = AnalisadorSintatico()
-    analisador.analisar(entrada)
     
-    
-
-
-
-
-
-
-

@@ -1,13 +1,7 @@
 void main{
-num: integer = 10
+num: integer;
 inicio
-cout<<num
-'a'
-"aaa"
-|aaaaa|
--10
-1.800
-num = 11
-if else
+cout<<|aaaaa|;
+num = 11;
 fim
 }
