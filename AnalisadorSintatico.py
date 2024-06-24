@@ -414,7 +414,7 @@ class AnalisadorSintatico:
             palavra = self.nao_terminais.get(token)
             return palavra
 
-    def analisar(self, entrada, text_box):
+    def analisar(self, entrada, text_box, text_box_semantico):
         
         text_box.configure(state="normal")
         text_box.delete('1.0', 'end')

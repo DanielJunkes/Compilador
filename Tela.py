@@ -8,17 +8,17 @@ class Tela():
     def __init__(self):
         #interface grafica
         self.app = ctk.CTk()
-
+        
         self.app.title("Analisador Léxico")
         self.app.geometry("1280x650")
         self.app.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
-        self.app.grid_rowconfigure((0, 1, 2, 3, 4), weight=1)
+        self.app.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6), weight=1)
 
         #area para escrever
         self.label = ctk.CTkLabel(self.app, text="Código:")
         self.label.grid(row=0, column=0, padx=10)
         self.textBox = ctk.CTkTextbox(self.app)
-        self.textBox.grid(row=0, column=0, rowspan=4, columnspan=4, sticky="nsew", padx=(10, 10), pady=10)
+        self.textBox.grid(row=0, column=0, rowspan=6, columnspan=4, sticky="nsew", padx=(10, 10), pady=10)
 
         #area para mostrar analise lexica
         self.textBoxResult = ctk.CTkTextbox(self.app, state="disabled")
@@ -26,15 +26,19 @@ class Tela():
 
         #area para mostrar analise sintatica
         self.textBoxSintatico = ctk.CTkTextbox(self.app, state="disabled")
-        self.textBoxSintatico.grid(row=2, column=4, rowspan=2, sticky="nsew", padx=(0, 10), pady=10)
+        self.textBoxSintatico.grid(row=2, column=4, rowspan=2, sticky="nsew", padx=(0, 10), pady=(10, 0))
+        
+        #area para mostrar analise semantica
+        self.textBoxSemantica = ctk.CTkTextbox(self.app, state="disabled")
+        self.textBoxSemantica.grid(row=4, column=4, rowspan=2, sticky="nsew", padx=(0, 10), pady=10)
 
         #botao d analisar
         self.btnAnalisar = ctk.CTkButton(self.app, text="Analisar", command=self.__analisar)
-        self.btnAnalisar.grid(row=4, column=0, columnspan=3, sticky="nsew", padx=10, pady=10)
+        self.btnAnalisar.grid(row=6, column=0, columnspan=3, sticky="nsew", padx=10, pady=(0, 10))
 
         #botao para importar arquivo
         self.btnImportar = ctk.CTkButton(self.app, text="Importar Arquivo", command=self.__importar_arquivo)
-        self.btnImportar.grid(row=4, column=3, columnspan=3, sticky="nsew", padx=10, pady=10)
+        self.btnImportar.grid(row=6, column=3, columnspan=3, sticky="nsew", padx=10, pady=(0, 10))
 
         self.app.mainloop()
         
@@ -55,7 +59,7 @@ class Tela():
         analisadorSintatico = AnalisadorSintatico()
         
         tokens = analisadorLexico.analisar(self.textBox, self.textBoxResult)
-        analisadorSintatico.analisar(entrada=tokens, text_box=self.textBoxSintatico)
+        analisadorSintatico.analisar(entrada=tokens, text_box=self.textBoxSintatico, text_box_semantico=self.textBoxSemantica)
         
 if __name__ == '__main__':
     tela = Tela()
