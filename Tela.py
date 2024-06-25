@@ -49,7 +49,6 @@ class Tela():
         self.textBox.delete('1.0', 'end')
         self.textBox.insert('end', conteudo)
         
-    
     def __analisar(self):
         analisadorLexico = AnalisadorLexico()
         analisadorSintatico = AnalisadorSintatico()

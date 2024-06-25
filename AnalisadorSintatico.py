@@ -1,18 +1,20 @@
+from TabelaDeSimbolos import Simbolo, TabelaDeSimbolos
+
 class AnalisadorSintatico:
     
     producoes = { 1: [2, 11, 37, 50, 51, 52, 36], 
-        2: [7, 53, 39, 54, 38, 55], 
+        2: ['A_S_DCLVAR', 7, 53, 39, 54, 38, 55], 
         3: [ ], 
         4: [ ], 
-        5: [41, 7, 53],
+        5: [41, 'A_S_DCLVAR', 7, 53],
         6: [13], 
         7: [18], 
         8: [3], 
         9: [24], 
         10: [57, 39, 54, 38, 55],
         11: [ ], 
-        12: [7, 53], 
-        13: [58, 7, 59, 37, 50,51, 52, 4, 44, 60, 43, 36, 51], 
+        12: ['A_S_DCLVAR', 7, 53], 
+        13: ['A_S_DCLFUNC', 58, 7, 59, 37, 50,51, 52, 4, 44, 60, 43, 36, 'A_S_FNLFUNC', 51], 
         14: [13], 
         15: [2],
         16: [24], 
@@ -115,6 +117,9 @@ class AnalisadorSintatico:
     
     def __init__(self):
         self.__iniciarMatriz()
+        self.tabela_simbolos = TabelaDeSimbolos()    
+        self.tipos_validos = {'integer', 'float', 'string', 'char'}
+        self.nivel = 0
     
     def __iniciarMatriz(self):
         self.tabela[0][1]=1
@@ -387,14 +392,12 @@ class AnalisadorSintatico:
         self.tabela[29][48]=79
         self.tabela[29][42]=80
         self.tabela[29][40]=81
-
         
     def __acharNumProducao(self, naoTerminal, terminal):
         numeroProducao=self.tabela[naoTerminal][terminal]
         return numeroProducao
     
-    def __get_palavra(self, token):
-        
+    def __get_palavra(self, token):    
         if token in self.palavras_reservadas:
             palavra = self.palavras_reservadas.get(token)
             return palavra
@@ -415,29 +418,37 @@ class AnalisadorSintatico:
             return palavra
 
     def analisar(self, entrada, text_box):
-        
         text_box.configure(state="normal")
         text_box.delete('1.0', 'end')
         text_box.configure(state="disabled")
         
         pilha = self.producoes.get(self.producaoInicial) + ["$"]
         linhaToken = entrada[0][1]
+        lexemaToken = entrada[0][2]
         
         while pilha[0] != "$":
-            
             tokens = []
             for i in range(len(entrada)):
                 tokens.append(entrada[i][0])
                 
             if len(entrada) > 0:
                 linhaToken = entrada[0][1]
+                lexemaToken = entrada[0][2]
                 
             text_box.configure(state="normal")
             text_box.insert("end", f"pilha:{pilha} \nsentenca: {tokens}\n\n")
             text_box.configure(state="disabled")
-                        
-            if pilha[0] >= self.inicioNaoTerminais:
+            
+            # print(entrada)
+            # print(entrada[0][1])
+            # print('lexemaToken:',lexemaToken)
+            # print('linhaToken:',linhaToken)
+            
+            if str(pilha[0]).startswith('A_S_'):
+                self.__executarAcaoSemantica(pilha[0], entrada, text_box, linhaToken, lexemaToken)
+                pilha.pop(0)
                 
+            elif pilha[0] >= self.inicioNaoTerminais:
                 linhaNaoTerminal=0
                 colunaTerminal=0
                 i=0
@@ -451,8 +462,8 @@ class AnalisadorSintatico:
                         i += 1
                 
                 numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
+                
                 if numeroProducao == 0:
-                    
                     palavra_esperada = self.__get_palavra(pilha[0])
                     palavra_recebida = ""
                     if len(entrada) > 0:
@@ -485,4 +496,33 @@ class AnalisadorSintatico:
         text_box.insert("end", f"pilha:{pilha} \nsentenca: {entrada}\n")
         text_box.configure(state="disabled")
     
-    
+    def __executarAcaoSemantica(self, acao, entrada, text_box, linhaToken, lexemaToken):
+        if acao == 'A_S_DCLFUNC':
+            self.nivel += 1
+        if acao == 'A_S_FNLFUNC':
+            self.nivel -= 1
+        if acao == 'A_S_DCLVAR':
+            nome = lexemaToken
+            categoria = 'variavel'
+            
+            tipoPalavra = None
+            i=2
+            while tipoPalavra is None:
+                if entrada[i][2] in self.tipos_validos:
+                    tipoPalavra = entrada[i][2]
+                    break
+                else:
+                    i += 2
+
+            # linha = linhaToken
+
+            simbolo = Simbolo(nome, categoria, tipoPalavra, self.nivel)
+            try:
+                self.tabela_simbolos.inserir(simbolo)
+                text_box.configure(state="normal")
+                text_box.insert("end", f"Adicionado identificador '{nome}' do tipo '{tipoPalavra}' a tabela de símbolos.\n\n")
+                text_box.configure(state="disabled")
+            except ValueError as e:
+                text_box.configure(state="normal")
+                text_box.insert("end", f"{str(e)}\n")
+                text_box.configure(state="disabled")

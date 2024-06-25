@@ -1,5 +1,6 @@
 void main{
 num: integer;
+luc: string;
 inicio
 cout<<|aaaaa|;
 num = 11;

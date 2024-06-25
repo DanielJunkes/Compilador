@@ -1,0 +1,39 @@
+void main { 
+    variavelA , variavelB : integer ;
+    variavelC : string ; 
+    void funcaoA ( integer parametroA ; float parametroB )  { 
+        variavelD : float ; 
+        integer funcaoB {
+            variavelE : integer ;
+            inicio
+                variavelE = 3 ;
+            fim
+            return (variavelE)
+        }
+        inicio  
+            while ( variavelD == 2.8 ) { 
+                variavelD = 2.2 ; 
+            } ;
+        fim 
+        return ( ) 
+    }
+    float funcaoC {
+        variavelF : float ;
+        void funcaoD {
+            variavelG : char ;
+            inicio
+                variavelG = 'a' ;
+            fim
+            return ( )
+        }
+        inicio
+            variavelF = 3.2 ;
+        fim
+        return (variavelF)
+    }
+    inicio  
+        if ( variavelA > 3 ) {
+            variavelB = 2 * 4 - variavelC ; 
+        } ; 
+    fim  
+}
