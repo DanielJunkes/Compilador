@@ -17,7 +17,7 @@ void main {
         inicio  
             variavelD = 1.5 ;
             while ( variavelD < 2.8 ) { 
-                variavelH = 3 ; 
+                variavelH = variavelD / 3 ; 
             } ;
         fim 
         return ( ) 
@@ -35,15 +35,16 @@ void main {
         }
 
         inicio
-            variavelF = 3.2 ;
+            variavelF = 3.2 - 1 ;
         fim
         return ( )
     }
 
     inicio 
         variavelA = 5 ; 
-        if ( variavelA > 3 ) {
-            variavelB = 2 ; 
+        variavelB = variavelA + 3 ;
+        if ( variavelB > 3 ) {
+            variavelC = "Compilador" ; 
         } ; 
     fim  
 }

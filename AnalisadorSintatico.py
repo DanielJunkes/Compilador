@@ -527,13 +527,11 @@ class AnalisadorSintatico:
         if acao == 'A_S_ATRVAR':
             simbolo = self.tabela_simbolos.buscar(lexemaToken)
             if simbolo is None:
-                print('Erro semântico: Variável ' + lexemaToken + ' não declarada, ou declarada fora do seu escopo - Linha ', linhaToken, '\n')
+                print('Erro semântico: variável ' + lexemaToken + ' não declarada, ou declarada fora do seu escopo - Linha', linhaToken, '\n')
             else:
                 tipoSimbolo = simbolo.tipo
                 nivelSimbolo = simbolo.nivel
                 nivelAtual = len(self.tabela_simbolos.escopos) - 1
-                # valorEntrada = entrada[2][2]
-                # print(entrada, '\n')
                 
                 expressao = []
                 tipoPalavra = None
@@ -545,23 +543,32 @@ class AnalisadorSintatico:
                     else:
                         break
                 
-                # print('expressao: ', expressao)
-                
                 operadores = {'+', '-', '*', '/'}
                 valoresExpressao = [token for token in expressao if token not in operadores]
-                
-                # print('valoresExpressao: ', valoresExpressao)
-                
-                if not self.validarOperacao(valoresExpressao, tipoSimbolo):
+                                                
+                if not self.validarOperacao(valoresExpressao, tipoSimbolo, nivelAtual):
                     print(f"Erro semântico: operação inválida para a variável '{lexemaToken}' que é do tipo '{tipoSimbolo}' - Linha {linhaToken}'\n")
-                                            
-                if nivelSimbolo != nivelAtual:
+                
+                if not self.ehVariavelNoEscopo(lexemaToken, nivelAtual):
                     msg = f"Erro semântico: o nível do escopo da declaração da variável {lexemaToken} é {nivelSimbolo}, não {nivelAtual} - Linha {linhaToken}"
                     print(msg, '\n')
+                    
+                for valor in valoresExpressao:
+                    if self.ehVariavelDeclarada(valor):
+                        simbolo = self.tabela_simbolos.buscar(valor)
+                        
+                        if simbolo.nivel != nivelAtual:
+                            msg = f"Erro semântico: o nível do escopo da variável {simbolo.nome} é diferente do da {lexemaToken} - Linha {linhaToken}"
+                            print(msg, '\n')
                                 
-    def validarOperacao(self, valores, tipoVariavel):
-        for valor in valores:
-            if tipoVariavel == 'integer' and not (self.ehInteiro(valor) or self.ehNumero(valor)):
+    def validarOperacao(self, valoresExpressao, tipoVariavel, nivelAtual):
+        for valor in valoresExpressao:
+            if self.ehVariavelDeclarada(valor):
+                simbolo = self.tabela_simbolos.buscar(valor)
+
+                if simbolo.tipo != tipoVariavel and tipoVariavel not in ['integer', 'float']:
+                    return False
+            elif tipoVariavel == 'integer' and not (self.ehInteiro(valor) or self.ehNumero(valor)):
                 return False
             elif tipoVariavel == 'float' and not self.ehNumero(valor):
                 return False
@@ -570,6 +577,13 @@ class AnalisadorSintatico:
             elif tipoVariavel == 'string' and self.ehChar(valor):
                 return False
         return True
+    
+    def ehVariavelDeclarada(self, nomeVariavel):
+        return self.tabela_simbolos.buscar(nomeVariavel) is not None
+    
+    def ehVariavelNoEscopo(self, nomeVariavel, nivelAtual):
+        simbolo = self.tabela_simbolos.buscarNoEscopo(nomeVariavel)
+        return simbolo is not None and simbolo.nivel == nivelAtual
     
     def ehNumero(self, valor):
             try:

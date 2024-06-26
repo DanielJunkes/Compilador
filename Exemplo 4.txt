@@ -12,7 +12,7 @@ void main {
     }
     inicio  
         if ( variavelA > 3 ) {
-            variavelB = 2 * 4 - variavelC ; 
+            variavelB = 2 * 4 - variavelA ; 
         } ; 
     fim  
 }
