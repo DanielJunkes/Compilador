@@ -1,22 +1,24 @@
 
 void main{
-    nome:string;
-    anoNasc: integer;
-    idade: integer;
+    nome : string ;
+    anoNasc : integer ;
+    idade : integer ;
 
     integer funcao (integer anoNasc){
-        idade: integer;
-        anoAtual: integer;
+        anoAtual : integer ;
+        idade : integer ;
         inicio
-        idade = anoAtual + anoNasc;
+            anoAtual = 2024 ;
+            idade = anoAtual - anoNasc;
         fim
-        return (idade)}
+        return (idade)
+    }
 
     inicio
-    
-    idade = callfuncao funcao(anoNasc);
-    cout<<|Nome:|<<nome;
-    cout<<|Idade:|<<idade;
-
+        nome = "Lucas" ; 
+        anoNasc = 2002 ;
+        idade = callfuncao funcao (anoNasc);
+        cout << | Nome: | << nome ;
+        cout << | Idade: | << idade ;
     fim
 }

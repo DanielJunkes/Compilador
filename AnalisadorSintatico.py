@@ -35,7 +35,7 @@ class AnalisadorSintatico:
         31: [14, 63, 38, 64,19], 
         32: [ ], 
         33: [63, 38, 64], 
-        34: [7, 30, 65], 
+        34: ['A_S_ATRVAR', 7, 30, 65], 
         35: [10, 30, 65],
         36: [8, 30, 65], 
         37: [ ], 
@@ -514,8 +514,6 @@ class AnalisadorSintatico:
                 else:
                     i += 2
 
-            # linha = linhaToken
-
             simbolo = Simbolo(nome, categoria, tipoPalavra, self.nivel)
             try:
                 self.tabela_simbolos.inserir(simbolo)
@@ -526,3 +524,59 @@ class AnalisadorSintatico:
                 text_box.configure(state="normal")
                 text_box.insert("end", f"{str(e)}\n")
                 text_box.configure(state="disabled")
+        if acao == 'A_S_ATRVAR':
+            simbolo = self.tabela_simbolos.buscar(lexemaToken)
+            valorEntrada = entrada[2][2]
+            tipoSimbolo = simbolo.tipo
+            nivelSimbolo = simbolo.nivel
+                        
+            print('nomeToken:', simbolo.nome)
+            print('valorEntrada:', valorEntrada)
+            # print('tipoSimbolo:', tipoSimbolo)
+            print('nivelSimbolo:', nivelSimbolo, '\n')
+            
+            ehNumero = self.ehNumero(valorEntrada)
+            ehNumeroInt = self.ehInteiro(valorEntrada)
+            ehChar = self.ehChar(valorEntrada)
+
+            if ehNumero: # é número
+                if ehNumeroInt:
+                    if tipoSimbolo != 'integer':
+                        if valorEntrada != 'callfuncao':
+                            print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken)
+                else:
+                    if tipoSimbolo != 'float':
+                        if valorEntrada != 'callfuncao':
+                            print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken)
+            else: # não é número
+                if ehChar:
+                    if tipoSimbolo != 'char':
+                        if valorEntrada != 'callfuncao':
+                            print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken)
+                else:
+                    if tipoSimbolo != 'string':
+                        if valorEntrada != 'callfuncao':
+                            print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken)
+                            
+            
+            
+    def ehNumero(self, valor):
+            try:
+                float(valor)
+                return True
+            except ValueError:
+                return False
+            
+    def ehInteiro(self, valor):
+        try:
+            int_valor = int(valor)
+            float_valor = float(valor)
+            return int_valor == float_valor
+        except ValueError:
+            return False
+        
+    def ehChar(self, valor):
+        if len(valor) == 1:
+            return True
+        else:
+            return False

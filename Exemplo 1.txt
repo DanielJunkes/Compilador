@@ -1,8 +1,13 @@
-void main{
-num: integer;
-luc: string;
-inicio
-cout<<|aaaaa|;
-num = 11;
-fim
+void main {
+    varInt : integer ;
+    varFloat : float ;
+    varString : string ;
+    varChar : char ;
+    
+    inicio
+        varInt = 12 ;
+        varFloat = 21.12 ;
+        varString = "lucas" ;
+        varChar = 'l' ;
+    fim
 }
