@@ -1,12 +1,15 @@
 void main {
-    varInt : integer ;
+    varInt , varIntA , varIntB , varIntC : integer ;
     varFloat : float ;
     varString : string ;
     varChar : char ;
     
     inicio
-        varInt = 12 ;
-        varFloat = 21.12 ;
+        varInt = 12 + 31 ;
+        varIntA = 12 * 12 - 31 ;
+        varIntB = 12 - 12.31 ;
+        varIntC = 12 + "lucas" ;
+        varFloat = 12.31 * 12;
         varString = "lucas" ;
         varChar = 'l' ;
     fim

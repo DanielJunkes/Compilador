@@ -118,7 +118,7 @@ class AnalisadorSintatico:
     def __init__(self):
         self.__iniciarMatriz()
         self.tabela_simbolos = TabelaDeSimbolos()    
-        self.tipos_validos = {'integer', 'float', 'string', 'char'}
+        self.tiposValidos = {'integer', 'float', 'string', 'char'}
     
     def __iniciarMatriz(self):
         self.tabela[0][1]=1
@@ -438,11 +438,6 @@ class AnalisadorSintatico:
             text_box.insert("end", f"pilha:{pilha} \nsentenca: {tokens}\n\n")
             text_box.configure(state="disabled")
             
-            # print(entrada)
-            # print(entrada[0][1])
-            # print('lexemaToken:',lexemaToken)
-            # print('linhaToken:',linhaToken)
-            
             if str(pilha[0]).startswith('A_S_'):
                 self.__executarAcaoSemantica(pilha[0], entrada, text_box, linhaToken, lexemaToken)
                 pilha.pop(0)
@@ -505,9 +500,9 @@ class AnalisadorSintatico:
             categoria = 'variavel'
             
             tipoPalavra = None
-            i=2
+            i = 2
             while tipoPalavra is None:
-                if entrada[i][2] in self.tipos_validos:
+                if entrada[i][2] in self.tiposValidos:
                     tipoPalavra = entrada[i][2]
                     break
                 else:
@@ -537,41 +532,45 @@ class AnalisadorSintatico:
                 tipoSimbolo = simbolo.tipo
                 nivelSimbolo = simbolo.nivel
                 nivelAtual = len(self.tabela_simbolos.escopos) - 1
-                valorEntrada = entrada[2][2]
-                            
-                # print('nomeToken:', simbolo.nome)
-                # print('valorEntrada:', valorEntrada)
-                # # print('tipoSimbolo:', tipoSimbolo)
-                # print('nivelDeclaracao:', nivelSimbolo)
-                # print('nivelAtribuicao:', nivelAtual, '\n')
-
+                # valorEntrada = entrada[2][2]
+                # print(entrada, '\n')
+                
+                expressao = []
+                tipoPalavra = None
+                i = 2
+                while tipoPalavra is None:
+                    if entrada[i][2] != ';':
+                        expressao.append(entrada[i][2])
+                        i += 1
+                    else:
+                        break
+                
+                # print('expressao: ', expressao)
+                
+                operadores = {'+', '-', '*', '/'}
+                valoresExpressao = [token for token in expressao if token not in operadores]
+                
+                # print('valoresExpressao: ', valoresExpressao)
+                
+                if not self.validarOperacao(valoresExpressao, tipoSimbolo):
+                    print(f"Erro semântico: operação inválida para a variável '{lexemaToken}' que é do tipo '{tipoSimbolo}' - Linha {linhaToken}'\n")
+                                            
                 if nivelSimbolo != nivelAtual:
                     msg = f"Erro semântico: o nível do escopo da declaração da variável {lexemaToken} é {nivelSimbolo}, não {nivelAtual} - Linha {linhaToken}"
                     print(msg, '\n')
-                
-                ehNumero = self.ehNumero(valorEntrada)
-                ehNumeroInt = self.ehInteiro(valorEntrada)
-                ehChar = self.ehChar(valorEntrada)
-
-                if ehNumero: # é número
-                    if ehNumeroInt:
-                        if tipoSimbolo != 'integer':
-                            if valorEntrada != 'callfuncao':
-                                print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken, '\n')
-                    else:
-                        if tipoSimbolo != 'float':
-                            if valorEntrada != 'callfuncao':
-                                print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken, '\n')
-                else: # não é número
-                    if ehChar:
-                        if tipoSimbolo != 'char':
-                            if valorEntrada != 'callfuncao':
-                                print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken, '\n')
-                    else:
-                        if tipoSimbolo != 'string':
-                            if valorEntrada != 'callfuncao':
-                                print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken, '\n')
                                 
+    def validarOperacao(self, valores, tipoVariavel):
+        for valor in valores:
+            if tipoVariavel == 'integer' and not (self.ehInteiro(valor) or self.ehNumero(valor)):
+                return False
+            elif tipoVariavel == 'float' and not self.ehNumero(valor):
+                return False
+            elif tipoVariavel == 'char' and not self.ehChar(valor):
+                return False
+            elif tipoVariavel == 'string' and self.ehChar(valor):
+                return False
+        return True
+    
     def ehNumero(self, valor):
             try:
                 float(valor)
