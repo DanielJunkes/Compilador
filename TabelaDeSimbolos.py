@@ -5,30 +5,34 @@ class Simbolo:
         self.tipo = tipo
         self.nivel = nivel
         
-class TabelaDeSimbolos:
+class TabelaDeSimbolos: 
     def __init__(self):
-        self.escopos = [{}]
+        self.escopos = [{}] # lista de dicionários que representam escopos
         
-    def entrar_escopo(self):
-        self.escopos.append({})
+    def entrarEscopo(self):
+        self.escopos.append({}) # cria um novo escopo vazio e o adiciona a lista de escopos
         
-    def sair_escopo(self):
+    def sairEscopo(self):
         if len(self.escopos) > 1:
-            self.escopos.pop()
+            self.escopos.pop() # remove o escopo mais interno da lista de escopos
         
     def inserir(self, simbolo):
         escopo_atual = self.escopos[-1]
-        escopo_atual[simbolo.nome] = simbolo
+        escopo_atual[simbolo.nome] = simbolo # adiciona um símbolo ao escopo mais interno
         
-        self.imprimir_tabela()
+        self.imprimirTabela()
         
     def buscar(self, nome):
-        for escopo in reversed(self.escopos):  # Procura do escopo mais interno para o mais externo
+        for escopo in reversed(self.escopos):  # procura do escopo mais interno para o mais externo
             if nome in escopo:
                 return escopo[nome]
-        return None  # Se não encontrado em nenhum escopo
+        return None  
     
-    def imprimir_tabela(self):
+    def buscarNoEscopo(self, nome):
+        escopo_atual = self.escopos[-1]
+        return escopo_atual.get(nome, None)
+    
+    def imprimirTabela(self):
         tabela = "Nome | Categoria | Tipo | Nível\n"
         tabela += "-" * 30 + "\n"
         for escopo in self.escopos:

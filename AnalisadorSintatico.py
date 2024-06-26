@@ -119,7 +119,6 @@ class AnalisadorSintatico:
         self.__iniciarMatriz()
         self.tabela_simbolos = TabelaDeSimbolos()    
         self.tipos_validos = {'integer', 'float', 'string', 'char'}
-        self.nivel = 0
     
     def __iniciarMatriz(self):
         self.tabela[0][1]=1
@@ -498,9 +497,9 @@ class AnalisadorSintatico:
     
     def __executarAcaoSemantica(self, acao, entrada, text_box, linhaToken, lexemaToken):
         if acao == 'A_S_DCLFUNC':
-            self.tabela_simbolos.entrar_escopo()
+            self.tabela_simbolos.entrarEscopo()
         if acao == 'A_S_FNLFUNC':
-            self.tabela_simbolos.sair_escopo()
+            self.tabela_simbolos.sairEscopo()
         if acao == 'A_S_DCLVAR':
             nome = lexemaToken
             categoria = 'variavel'
@@ -516,6 +515,10 @@ class AnalisadorSintatico:
                     
             nivelAtual = len(self.tabela_simbolos.escopos) - 1 # nível atual é o topo da pilha de escopos
 
+            simboloExistente = self.tabela_simbolos.buscarNoEscopo(nome)
+            if simboloExistente:
+                print('Erro semântico: variável ' + lexemaToken + ' já foi declarada no escopo atual - Linha', linhaToken, '\n')
+            
             simbolo = Simbolo(nome, categoria, tipoPalavra, nivelAtual)
             try:
                 self.tabela_simbolos.inserir(simbolo)
@@ -529,7 +532,7 @@ class AnalisadorSintatico:
         if acao == 'A_S_ATRVAR':
             simbolo = self.tabela_simbolos.buscar(lexemaToken)
             if simbolo is None:
-                print('Erro semântico: Variável ' + lexemaToken + ' não declarada, ou declarada fora do seu escopo - Linha ', linhaToken)
+                print('Erro semântico: Variável ' + lexemaToken + ' não declarada, ou declarada fora do seu escopo - Linha ', linhaToken, '\n')
             else:
                 tipoSimbolo = simbolo.tipo
                 nivelSimbolo = simbolo.nivel
@@ -544,7 +547,7 @@ class AnalisadorSintatico:
 
                 if nivelSimbolo != nivelAtual:
                     msg = f"Erro semântico: o nível do escopo da declaração da variável {lexemaToken} é {nivelSimbolo}, não {nivelAtual} - Linha {linhaToken}"
-                    print(msg)
+                    print(msg, '\n')
                 
                 ehNumero = self.ehNumero(valorEntrada)
                 ehNumeroInt = self.ehInteiro(valorEntrada)
@@ -554,20 +557,20 @@ class AnalisadorSintatico:
                     if ehNumeroInt:
                         if tipoSimbolo != 'integer':
                             if valorEntrada != 'callfuncao':
-                                print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken)
+                                print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken, '\n')
                     else:
                         if tipoSimbolo != 'float':
                             if valorEntrada != 'callfuncao':
-                                print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken)
+                                print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken, '\n')
                 else: # não é número
                     if ehChar:
                         if tipoSimbolo != 'char':
                             if valorEntrada != 'callfuncao':
-                                print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken)
+                                print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken, '\n')
                     else:
                         if tipoSimbolo != 'string':
                             if valorEntrada != 'callfuncao':
-                                print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken)
+                                print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken, '\n')
                                 
     def ehNumero(self, valor):
             try:
