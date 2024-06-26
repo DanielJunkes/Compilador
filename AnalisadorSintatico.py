@@ -1,18 +1,20 @@
+from TabelaDeSimbolos import Simbolo, TabelaDeSimbolos
+
 class AnalisadorSintatico:
     
     producoes = { 1: [2, 11, 37, 50, 51, 52, 36], 
-        2: [7, 53, 39, 54, 38, 55], 
+        2: ['A_S_DCLVAR', 7, 53, 39, 54, 38, 55], 
         3: [ ], 
         4: [ ], 
-        5: [41, 7, 53],
+        5: [41, 'A_S_DCLVAR', 7, 53],
         6: [13], 
         7: [18], 
         8: [3], 
         9: [24], 
         10: [57, 39, 54, 38, 55],
         11: [ ], 
-        12: [7, 53], 
-        13: [58, 7, 59, 37, 50,51, 52, 4, 44, 60, 43, 36, 51], 
+        12: ['A_S_DCLVAR', 7, 53], 
+        13: ['A_S_DCLFUNC', 58, 7, 59, 37, 50,51, 52, 4, 44, 60, 43, 36, 'A_S_FNLFUNC', 51], 
         14: [13], 
         15: [2],
         16: [24], 
@@ -33,7 +35,7 @@ class AnalisadorSintatico:
         31: [14, 63, 38, 64,19], 
         32: [ ], 
         33: [63, 38, 64], 
-        34: [7, 30, 65], 
+        34: ['A_S_ATRVAR', 7, 30, 65], 
         35: [10, 30, 65],
         36: [8, 30, 65], 
         37: [ ], 
@@ -115,6 +117,8 @@ class AnalisadorSintatico:
     
     def __init__(self):
         self.__iniciarMatriz()
+        self.tabela_simbolos = TabelaDeSimbolos()    
+        self.tiposValidos = {'integer', 'float', 'string', 'char'}
     
     def __iniciarMatriz(self):
         self.tabela[0][1]=1
@@ -387,14 +391,12 @@ class AnalisadorSintatico:
         self.tabela[29][48]=79
         self.tabela[29][42]=80
         self.tabela[29][40]=81
-
         
     def __acharNumProducao(self, naoTerminal, terminal):
         numeroProducao=self.tabela[naoTerminal][terminal]
         return numeroProducao
     
-    def __get_palavra(self, token):
-        
+    def __get_palavra(self, token):    
         if token in self.palavras_reservadas:
             palavra = self.palavras_reservadas.get(token)
             return palavra
@@ -422,22 +424,26 @@ class AnalisadorSintatico:
         
         pilha = self.producoes.get(self.producaoInicial) + ["$"]
         linhaToken = entrada[0][1]
+        lexemaToken = entrada[0][2]
         
         while pilha[0] != "$":
-            
             tokens = []
             for i in range(len(entrada)):
                 tokens.append(entrada[i][0])
                 
             if len(entrada) > 0:
                 linhaToken = entrada[0][1]
+                lexemaToken = entrada[0][2]
                 
             text_box.configure(state="normal")
             text_box.insert("end", f"pilha:{pilha} \nsentenca: {tokens}\n\n")
             text_box.configure(state="disabled")
-                        
-            if pilha[0] >= self.inicioNaoTerminais:
+            
+            if str(pilha[0]).startswith('A_S_'):
+                self.__executarAcaoSemantica(pilha[0], entrada, text_box, linhaToken, lexemaToken)
+                pilha.pop(0)
                 
+            elif pilha[0] >= self.inicioNaoTerminais:
                 linhaNaoTerminal=0
                 colunaTerminal=0
                 i=0
@@ -451,8 +457,8 @@ class AnalisadorSintatico:
                         i += 1
                 
                 numeroProducao = self.__acharNumProducao(linhaNaoTerminal, colunaTerminal)
+                
                 if numeroProducao == 0:
-                    
                     palavra_esperada = self.__get_palavra(pilha[0])
                     palavra_recebida = ""
                     if len(entrada) > 0:
@@ -485,4 +491,118 @@ class AnalisadorSintatico:
         text_box.insert("end", f"pilha:{pilha} \nsentenca: {entrada}\n")
         text_box.configure(state="disabled")
     
+    def __executarAcaoSemantica(self, acao, entrada, text_box, linhaToken, lexemaToken):
+        if acao == 'A_S_DCLFUNC':
+            self.tabela_simbolos.entrarEscopo()
+        if acao == 'A_S_FNLFUNC':
+            self.tabela_simbolos.sairEscopo()
+        if acao == 'A_S_DCLVAR':
+            nome = lexemaToken
+            categoria = 'variavel'
+            
+            tipoPalavra = None
+            i = 2
+            while tipoPalavra is None:
+                if entrada[i][2] in self.tiposValidos:
+                    tipoPalavra = entrada[i][2]
+                    break
+                else:
+                    i += 2
+                    
+            nivelAtual = len(self.tabela_simbolos.escopos) - 1 # nível atual é o topo da pilha de escopos
+
+            simboloExistente = self.tabela_simbolos.buscarNoEscopo(nome)
+            if simboloExistente:
+                print('Erro semântico: variável ' + lexemaToken + ' já foi declarada no escopo atual - Linha', linhaToken, '\n')
+            
+            simbolo = Simbolo(nome, categoria, tipoPalavra, nivelAtual)
+            try:
+                self.tabela_simbolos.inserir(simbolo)
+                text_box.configure(state="normal")
+                text_box.insert("end", f"Adicionado identificador '{nome}' do tipo '{tipoPalavra}' a tabela de símbolos.\n\n")
+                text_box.configure(state="disabled")
+            except ValueError as e:
+                text_box.configure(state="normal")
+                text_box.insert("end", f"{str(e)}\n")
+                text_box.configure(state="disabled")
+        if acao == 'A_S_ATRVAR':
+            simbolo = self.tabela_simbolos.buscar(lexemaToken)
+            if simbolo is None:
+                print('Erro semântico: variável ' + lexemaToken + ' não declarada, ou declarada fora do seu escopo - Linha', linhaToken, '\n')
+            else:
+                tipoSimbolo = simbolo.tipo
+                nivelSimbolo = simbolo.nivel
+                nivelAtual = len(self.tabela_simbolos.escopos) - 1
+                
+                expressao = []
+                tipoPalavra = None
+                i = 2
+                while tipoPalavra is None:
+                    if entrada[i][2] != ';':
+                        expressao.append(entrada[i][2])
+                        i += 1
+                    else:
+                        break
+                
+                operadores = {'+', '-', '*', '/'}
+                valoresExpressao = [token for token in expressao if token not in operadores]
+                                                
+                if not self.validarOperacao(valoresExpressao, tipoSimbolo, nivelAtual):
+                    print(f"Erro semântico: operação inválida para a variável '{lexemaToken}' que é do tipo '{tipoSimbolo}' - Linha {linhaToken}'\n")
+                
+                if not self.ehVariavelNoEscopo(lexemaToken, nivelAtual):
+                    msg = f"Erro semântico: o nível do escopo da declaração da variável {lexemaToken} é {nivelSimbolo}, não {nivelAtual} - Linha {linhaToken}"
+                    print(msg, '\n')
+                    
+                for valor in valoresExpressao:
+                    if self.ehVariavelDeclarada(valor):
+                        simbolo = self.tabela_simbolos.buscar(valor)
+                        
+                        if simbolo.nivel != nivelAtual:
+                            msg = f"Erro semântico: o nível do escopo da variável {simbolo.nome} é diferente do da {lexemaToken} - Linha {linhaToken}"
+                            print(msg, '\n')
+                                
+    def validarOperacao(self, valoresExpressao, tipoVariavel, nivelAtual):
+        for valor in valoresExpressao:
+            if self.ehVariavelDeclarada(valor):
+                simbolo = self.tabela_simbolos.buscar(valor)
+
+                if simbolo.tipo != tipoVariavel and tipoVariavel not in ['integer', 'float']:
+                    return False
+            elif tipoVariavel == 'integer' and not (self.ehInteiro(valor) or self.ehNumero(valor)):
+                return False
+            elif tipoVariavel == 'float' and not self.ehNumero(valor):
+                return False
+            elif tipoVariavel == 'char' and not self.ehChar(valor):
+                return False
+            elif tipoVariavel == 'string' and self.ehChar(valor):
+                return False
+        return True
     
+    def ehVariavelDeclarada(self, nomeVariavel):
+        return self.tabela_simbolos.buscar(nomeVariavel) is not None
+    
+    def ehVariavelNoEscopo(self, nomeVariavel, nivelAtual):
+        simbolo = self.tabela_simbolos.buscarNoEscopo(nomeVariavel)
+        return simbolo is not None and simbolo.nivel == nivelAtual
+    
+    def ehNumero(self, valor):
+            try:
+                float(valor)
+                return True
+            except ValueError:
+                return False
+            
+    def ehInteiro(self, valor):
+        try:
+            int_valor = int(valor)
+            float_valor = float(valor)
+            return int_valor == float_valor
+        except ValueError:
+            return False
+        
+    def ehChar(self, valor):
+        if len(valor) == 1:
+            return True
+        else:
+            return False

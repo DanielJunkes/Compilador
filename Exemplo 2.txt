@@ -1,17 +1,19 @@
 void main{
-    numUm: integer;
-    numDOis: integer;
+    varIntA : integer ;
+    varIntB : integer ;
 
-    integer funcao (integer numum; integer numdois){
-        
+    integer funcao (integer paramA ; integer paramB) { 
+        varResult : integer ;
+        inicio
+            varResult = paramA * paramB ;
+        fim
+        return(varResult)
+    }
+    
     inicio
-    result= numum * numdois;
-    fim
-    return(result)}
-
-    inicio
-
-    result = callfuncao funcao(numum,numdois);
-    cout<<|Resultado:|<<result;
+        varIntA = 2 ;
+        varIntB = 4;
+        varResult = callfuncao funcao(varIntA , varIntB) ;
+        cout << | Resultado : | << varResult ;
     fim
 }
