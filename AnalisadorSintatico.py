@@ -529,11 +529,17 @@ class AnalisadorSintatico:
             valorEntrada = entrada[2][2]
             tipoSimbolo = simbolo.tipo
             nivelSimbolo = simbolo.nivel
+            nivelAtual = self.nivel
                         
             print('nomeToken:', simbolo.nome)
             print('valorEntrada:', valorEntrada)
             # print('tipoSimbolo:', tipoSimbolo)
-            print('nivelSimbolo:', nivelSimbolo, '\n')
+            print('nivelDeclaracao:', nivelSimbolo)
+            print('nivelAtribuicao:', nivelAtual, '\n')
+
+            if nivelSimbolo != nivelAtual:
+                msg = f"Erro semântico: o nível do escopo da declaração da variável {lexemaToken} é {nivelSimbolo} - Linha {linhaToken}"
+                print(msg)
             
             ehNumero = self.ehNumero(valorEntrada)
             ehNumeroInt = self.ehInteiro(valorEntrada)
@@ -558,8 +564,6 @@ class AnalisadorSintatico:
                         if valorEntrada != 'callfuncao':
                             print('Erro semântico: variável ' + lexemaToken + ' é do tipo ' + tipoSimbolo + ' - Linha', linhaToken)
                             
-            
-            
     def ehNumero(self, valor):
             try:
                 float(valor)
