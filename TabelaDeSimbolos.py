@@ -16,11 +16,11 @@ class TabelaDeSimbolos:
         if len(self.escopos) > 1:
             self.escopos.pop() # remove o escopo mais interno da lista de escopos
         
-    def inserir(self, simbolo):
+    def inserir(self, simbolo, text_box):
         escopo_atual = self.escopos[-1]
         escopo_atual[simbolo.nome] = simbolo # adiciona um símbolo ao escopo mais interno
         
-        self.imprimirTabela()
+        self.imprimirTabela(text_box)
         
     def buscar(self, nome):
         for escopo in reversed(self.escopos):  # procura do escopo mais interno para o mais externo
@@ -32,13 +32,15 @@ class TabelaDeSimbolos:
         escopo_atual = self.escopos[-1]
         return escopo_atual.get(nome, None)
     
-    def imprimirTabela(self):
+    def imprimirTabela(self, text_box):
         tabela = "Nome | Categoria | Tipo | Nível\n"
         tabela += "-" * 30 + "\n"
         for escopo in self.escopos:
             for simbolo in escopo.values():
                 tabela += f"{simbolo.nome} | {simbolo.categoria} | {simbolo.tipo} | {simbolo.nivel}\n"
-        print(tabela)
+        text_box.configure(state="normal")
+        text_box.insert("end", f"{tabela}\n")
+        text_box.configure(state="disabled")
             
     # def remover(self, simbolo):
     #     self.simbolos.pop(simbolo)

@@ -119,6 +119,7 @@ class AnalisadorSintatico:
         self.__iniciarMatriz()
         self.tabela_simbolos = TabelaDeSimbolos()    
         self.tiposValidos = {'integer', 'float', 'string', 'char'}
+        self.acaoSemantica = ""
     
     def __iniciarMatriz(self):
         self.tabela[0][1]=1
@@ -440,10 +441,11 @@ class AnalisadorSintatico:
             text_box.configure(state="disabled")
             
             if str(pilha[0]).startswith('A_S_'):
-                self.__executarAcaoSemantica(pilha[0], entrada, text_box, linhaToken, lexemaToken)
+                self.acaoSemantica = str(pilha[0])
                 pilha.pop(0)
                 
             elif pilha[0] >= self.inicioNaoTerminais:
+                
                 linhaNaoTerminal=0
                 colunaTerminal=0
                 i=0
@@ -474,6 +476,13 @@ class AnalisadorSintatico:
                 pilha = adicionarAPilha + pilha
                 
             elif pilha[0] == entrada[0][0]:
+                
+
+                
+                if self.acaoSemantica != "":
+                    if(self.__executarAcaoSemantica(self.acaoSemantica, entrada, text_box_semantico, linhaToken, lexemaToken)):
+                        break
+                    self.acaoSemantica = ""
                 pilha.pop(0)
                 entrada.pop(0)
             else:
@@ -487,10 +496,11 @@ class AnalisadorSintatico:
                 text_box.configure(state="disabled")
                 return 0
         
-        text_box.configure(state="normal")
-        text_box.insert("end", f"pilha:{pilha} \nsentenca: {entrada}\n")
-        text_box.configure(state="disabled")
-    
+        if entrada == []:
+            text_box.configure(state="normal")
+            text_box.insert("end", f"pilha:{pilha} \nsentenca: {entrada}\n")
+            text_box.configure(state="disabled")
+        
     def __executarAcaoSemantica(self, acao, entrada, text_box, linhaToken, lexemaToken):
         if acao == 'A_S_DCLFUNC':
             self.tabela_simbolos.entrarEscopo()
@@ -514,21 +524,18 @@ class AnalisadorSintatico:
             simboloExistente = self.tabela_simbolos.buscarNoEscopo(nome)
             if simboloExistente:
                 print('Erro semântico: variável ' + lexemaToken + ' já foi declarada no escopo atual - Linha', linhaToken, '\n')
+                return True
             
             simbolo = Simbolo(nome, categoria, tipoPalavra, nivelAtual)
-            try:
-                self.tabela_simbolos.inserir(simbolo)
-                text_box.configure(state="normal")
-                text_box.insert("end", f"Adicionado identificador '{nome}' do tipo '{tipoPalavra}' a tabela de símbolos.\n\n")
-                text_box.configure(state="disabled")
-            except ValueError as e:
-                text_box.configure(state="normal")
-                text_box.insert("end", f"{str(e)}\n")
-                text_box.configure(state="disabled")
+
+            self.tabela_simbolos.inserir(simbolo, text_box=text_box)
+                
         if acao == 'A_S_ATRVAR':
             simbolo = self.tabela_simbolos.buscar(lexemaToken)
             if simbolo is None:
                 print('Erro semântico: variável ' + lexemaToken + ' não declarada, ou declarada fora do seu escopo - Linha', linhaToken, '\n')
+                return True
+
             else:
                 tipoSimbolo = simbolo.tipo
                 nivelSimbolo = simbolo.nivel
@@ -549,10 +556,12 @@ class AnalisadorSintatico:
                                                 
                 if not self.validarOperacao(valoresExpressao, tipoSimbolo, nivelAtual):
                     print(f"Erro semântico: operação inválida para a variável '{lexemaToken}' que é do tipo '{tipoSimbolo}' - Linha {linhaToken}'\n")
+                    return True
                 
                 if not self.ehVariavelNoEscopo(lexemaToken, nivelAtual):
                     msg = f"Erro semântico: o nível do escopo da declaração da variável {lexemaToken} é {nivelSimbolo}, não {nivelAtual} - Linha {linhaToken}"
                     print(msg, '\n')
+                    return True
                     
                 for valor in valoresExpressao:
                     if self.ehVariavelDeclarada(valor):
@@ -561,6 +570,8 @@ class AnalisadorSintatico:
                         if simbolo.nivel != nivelAtual:
                             msg = f"Erro semântico: o nível do escopo da variável {simbolo.nome} é diferente do da {lexemaToken} - Linha {linhaToken}"
                             print(msg, '\n')
+                            return True
+                       
                                 
     def validarOperacao(self, valoresExpressao, tipoVariavel, nivelAtual):
         for valor in valoresExpressao:

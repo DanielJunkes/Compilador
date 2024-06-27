@@ -44,7 +44,7 @@ class AnalisadorLexico:
                 self.__escrever_textbox(token=token, codigo=lexema, linha=i, textBoxResult=textBoxResult)
         else:
             if len(lexema) > 5:
-                self.__escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido', textBoxResult=textBoxResult)
+                self.__escrever_textbox(texto=f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Numero maior que o permitido', textBoxResult=textBoxResult)
             else:
                 token = self.valores_dos_dados.get('numerointeiro')
                 self.tokens.append([token, i, lexema])
@@ -52,12 +52,12 @@ class AnalisadorLexico:
 
     def __verificar_variavel(self, lexema, i, j, textBoxResult):
         if len(lexema) > 10:
-            self.__escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel maior que o permitido', textBoxResult=textBoxResult)
+            self.__escrever_textbox(texto=f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel maior que o permitido', textBoxResult=textBoxResult)
         elif re.search(r'\d', lexema):
-            self.__escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter numeros', textBoxResult=textBoxResult)
+            self.__escrever_textbox(texto=f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter numeros', textBoxResult=textBoxResult)
         else:
             if re.search(r'[@_!#$%|^&*()<>?/\\}{~:.]', lexema):
-                self.__escrever_textbox(f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter caracteres especiais', textBoxResult=textBoxResult)
+                self.__escrever_textbox(texto=f'Erro - Linha {i} - Posicao {j - len(lexema) + 1} - Nome de variavel não pode conter caracteres especiais', textBoxResult=textBoxResult)
             else:
                 token = self.valores_dos_dados.get('nomevariavel')
                 self.tokens.append([token, i, lexema])
