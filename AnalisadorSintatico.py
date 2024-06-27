@@ -477,8 +477,6 @@ class AnalisadorSintatico:
                 
             elif pilha[0] == entrada[0][0]:
                 
-
-                
                 if self.acaoSemantica != "":
                     if(self.__executarAcaoSemantica(self.acaoSemantica, entrada, text_box_semantico, linhaToken, lexemaToken)):
                         break
@@ -522,8 +520,10 @@ class AnalisadorSintatico:
             nivelAtual = len(self.tabela_simbolos.escopos) - 1 # nível atual é o topo da pilha de escopos
 
             simboloExistente = self.tabela_simbolos.buscarNoEscopo(nome)
-            if simboloExistente:
-                print('Erro semântico: variável ' + lexemaToken + ' já foi declarada no escopo atual - Linha', linhaToken, '\n')
+            if simboloExistente:                
+                text_box.configure(state="normal")
+                text_box.insert("end", f'Erro semântico: variável {lexemaToken} já foi declarada no escopo atual - Linha {linhaToken} \n')
+                text_box.configure(state="disabled")
                 return True
             
             simbolo = Simbolo(nome, categoria, tipoPalavra, nivelAtual)
@@ -533,7 +533,9 @@ class AnalisadorSintatico:
         if acao == 'A_S_ATRVAR':
             simbolo = self.tabela_simbolos.buscar(lexemaToken)
             if simbolo is None:
-                print('Erro semântico: variável ' + lexemaToken + ' não declarada, ou declarada fora do seu escopo - Linha', linhaToken, '\n')
+                text_box.configure(state="normal")
+                text_box.insert("end", f'Erro semântico: variável {lexemaToken} não declarada, ou declarada fora do seu escopo - Linha {linhaToken} \n')
+                text_box.configure(state="disabled")
                 return True
 
             else:
@@ -555,12 +557,15 @@ class AnalisadorSintatico:
                 valoresExpressao = [token for token in expressao if token not in operadores]
                                                 
                 if not self.validarOperacao(valoresExpressao, tipoSimbolo, nivelAtual):
-                    print(f"Erro semântico: operação inválida para a variável '{lexemaToken}' que é do tipo '{tipoSimbolo}' - Linha {linhaToken}'\n")
+                    text_box.configure(state="normal")
+                    text_box.insert("end", f"Erro semântico: operação inválida para a variável {lexemaToken} que é do tipo {tipoSimbolo} - Linha {linhaToken} \n")
+                    text_box.configure(state="disabled")
                     return True
                 
                 if not self.ehVariavelNoEscopo(lexemaToken, nivelAtual):
-                    msg = f"Erro semântico: o nível do escopo da declaração da variável {lexemaToken} é {nivelSimbolo}, não {nivelAtual} - Linha {linhaToken}"
-                    print(msg, '\n')
+                    text_box.configure(state="normal")
+                    text_box.insert("end", f"Erro semântico: o nível do escopo da declaração da variável {lexemaToken} é {nivelSimbolo}, não {nivelAtual} - Linha {linhaToken} \n")
+                    text_box.configure(state="disabled")
                     return True
                     
                 for valor in valoresExpressao:
@@ -568,10 +573,10 @@ class AnalisadorSintatico:
                         simbolo = self.tabela_simbolos.buscar(valor)
                         
                         if simbolo.nivel != nivelAtual:
-                            msg = f"Erro semântico: o nível do escopo da variável {simbolo.nome} é diferente do da {lexemaToken} - Linha {linhaToken}"
-                            print(msg, '\n')
+                            text_box.configure(state="normal")
+                            text_box.insert("end", f"Erro semântico: o nível do escopo da variável {simbolo.nome} é diferente do da {lexemaToken} - Linha {linhaToken} \n")
+                            text_box.configure(state="disabled")
                             return True
-                       
                                 
     def validarOperacao(self, valoresExpressao, tipoVariavel, nivelAtual):
         for valor in valoresExpressao:

@@ -1,0 +1,20 @@
+void main{
+    varIntA : integer ;
+    varIntB : integer ;
+
+    integer funcao { 
+        varFloat : float ;
+        inicio
+            varFloat = 3.87 ;
+        fim
+        return(varFloat)
+    }
+    
+    inicio
+        varIntA = 2 ;
+        varIntB = 4;
+        varFloat = 3.87 ;
+        varFuncao = callfuncao funcao ;
+        cout << | varFuncao : | << varResult ;
+    fim
+}

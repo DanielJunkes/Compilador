@@ -41,13 +41,3 @@ class TabelaDeSimbolos:
         text_box.configure(state="normal")
         text_box.insert("end", f"{tabela}\n")
         text_box.configure(state="disabled")
-            
-    # def remover(self, simbolo):
-    #     self.simbolos.pop(simbolo)
-    
-    # def __str__(self):
-    #     tabela = "Nome | Categoria | Tipo | Nível\n"
-    #     tabela += "-" * 30 + "\n"
-    #     for simbolo in self.simbolos:
-    #         tabela += f"{simbolo.nome} | {simbolo.categoria} | {simbolo.tipo} | {simbolo.nivel}\n"
-    #     return tabela
