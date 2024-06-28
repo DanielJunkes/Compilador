@@ -423,6 +423,10 @@ class AnalisadorSintatico:
         text_box.delete('1.0', 'end')
         text_box.configure(state="disabled")
         
+        text_box_semantico.configure(state="normal")
+        text_box_semantico.delete('1.0', 'end')
+        text_box_semantico.configure(state="disabled")
+        
         pilha = self.producoes.get(self.producaoInicial) + ["$"]
         linhaToken = entrada[0][1]
         lexemaToken = entrada[0][2]
